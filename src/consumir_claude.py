@@ -77,6 +77,8 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     return costo_total
 
 
-texto, costo = obtener_dato_de_prueba("Confirma brevemente que la conexión funciona correctamente.")
-print(texto)
-print(f"Costo estimado: ${costo:.6f} USD")
+# Prueba de conexión comentada: al importar este archivo desde medir_latencia.py
+# se ejecutaría y haría una petición extra
+# texto, costo = obtener_dato_de_prueba("Confirma brevemente que la conexión funciona correctamente.")
+# print(texto)
+# print(f"Costo estimado: ${costo:.6f} USD")
