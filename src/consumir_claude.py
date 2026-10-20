@@ -4,22 +4,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+URL_API = "https://api.anthropic.com/v1/messages"
+VERSION_API = "2023-06-01"
+MODELO = "claude-opus-5-5"
+MAX_TOKENS = 1000
+# Precios de claude-opus-5-5 en USD por millón de tokens (revisados el 2026-10-19)
+PRECIO_ENTRADA = 4.00
+PRECIO_SALIDA = 20.00
+
+API_KEY = os.getenv("ANTHROPIC_API_KEY")
+
 def armar_peticion(pregunta):
     if not pregunta or not pregunta.strip():
         raise ValueError("La pregunta no puede estar vacía.")
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise RuntimeError("Falta ANTHROPIC_API_KEY en el archivo .env.")
-    url = "https://api.anthropic.com/v1/messages"
+    if not API_KEY:
+        raise RuntimeError("Falta la API Key en el archivo .env.")
+    url = URL_API
     headers = {
-        "x-api-key": api_key,
-        "anthropic-version": "2023-06-01",
+        "x-api-key": API_KEY,
+        "anthropic-version": VERSION_API,
         "content-type": "application/json",
         "anthropic-beta": "server-side-fallback-2026-07-01",
     }
     body = {
-        "model": "claude-opus-5-5",
-        "max_tokens": 500,
+        "model": MODELO,
+        "max_tokens": MAX_TOKENS,
         "messages": [
             {"role": "user", "content": pregunta}
         ],
@@ -53,6 +62,21 @@ def extraer_texto(datos):
 def obtener_dato_de_prueba(pregunta):
     url, headers, body = armar_peticion(pregunta)
     datos = enviar_peticion(url, headers, body)
-    return extraer_texto(datos)
+    # Primero se extrae el texto: si la API devolvió un error, se detiene aquí con su mensaje
+    texto = extraer_texto(datos)
+    costo = calcular_costo(datos, precio_entrada=PRECIO_ENTRADA, precio_salida=PRECIO_SALIDA)
+    return texto, costo
 
-print(obtener_dato_de_prueba("Confirma brevemente que la conexión funciona correctamente."))
+#def calcular_costo(datos: dict, precio_entrada: float, precio_salida: float) -> float:
+def calcular_costo(datos, precio_entrada, precio_salida):
+    uso = datos["usage"]
+    tokens_de_entrada = uso["input_tokens"]
+    tokens_de_salida = uso["output_tokens"]  # ya incluye el razonamiento
+    # Los precios son por millón de tokens
+    costo_total = (tokens_de_entrada * precio_entrada + tokens_de_salida * precio_salida) / 1_000_000
+    return costo_total
+
+
+texto, costo = obtener_dato_de_prueba("Confirma brevemente que la conexión funciona correctamente.")
+print(texto)
+print(f"Costo estimado: ${costo:.6f} USD")
