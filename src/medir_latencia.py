@@ -1,13 +1,24 @@
+import base64
 import time
 
 from consumir_claude import armar_peticion, enviar_peticion, extraer_texto, calcular_costo
 
-def medir_latencia(pregunta, modelo, precio_entrada, precio_salida):
+def leer_imagen_base64(ruta):
+    # Las imágenes viajan dentro del JSON como texto en base64
+    with open(ruta, "rb") as archivo:
+        return base64.standard_b64encode(archivo.read()).decode("utf-8")
+
+def medir_latencia(pregunta, imagen_b64, modelo, precio_entrada, precio_salida):
     latencias = []
     costos = []
     for i in range(4):
         url, headers, body = armar_peticion(pregunta)
         body["model"] = modelo  # cambiamos el modelo que se va a medir
+        # Enviamos la foto y la pregunta juntas: el mensaje pasa a ser una lista de dos bloques
+        body["messages"][0]["content"] = [
+            {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": imagen_b64}},
+            {"type": "text", "text": pregunta},
+        ]
         inicio = time.perf_counter()
         respuesta_json = enviar_peticion(url, headers, body)
         fin = time.perf_counter()
@@ -29,10 +40,14 @@ def medir_latencia(pregunta, modelo, precio_entrada, precio_salida):
     return latencia_promedio, costo_promedio
 
 
-# Misma pregunta de prueba para los tres modelos
-pregunta = "Analiza esta fachada de una casona en Av. Brasil, Santiago: ventanas tapiadas con tablas, grafitis en el portón, pintura descascarada y vegetación creciendo en el techo. ¿Qué señales de posible abandono ves y qué tan fuerte es la evidencia? Responde en máximo 5 líneas."
+# Foto real de Google Street View (mayo 2024) de la propiedad de calle Almirante Barroso 256
+# (correr este archivo desde la carpeta raíz del proyecto)
+imagen_b64 = leer_imagen_base64("docs/fachada-almirante-barroso-256.png")
+
+# Misma pregunta y misma foto para los tres modelos
+pregunta = "Analiza esta foto de Google Street View de la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil, Santiago. ¿Qué señales de posible abandono ves (por ejemplo: ventanas tapiadas, malezas, grafitis, pintura descascarada) y qué tan fuerte es la evidencia? Responde en máximo 5 líneas."
 
 # Precios en USD por millón de tokens (página de precios de Anthropic, revisada el 2026-10-20)
-medir_latencia(pregunta, "claude-haiku-5-5", 0.10, 0.50)
-medir_latencia(pregunta, "claude-sonnet-5-5", 2.00, 10.00)
-medir_latencia(pregunta, "claude-opus-5-5", 4.00, 20.00)
+medir_latencia(pregunta, imagen_b64, "claude-haiku-5-5", 0.10, 0.50)
+medir_latencia(pregunta, imagen_b64, "claude-sonnet-5-5", 2.00, 10.00)
+medir_latencia(pregunta, imagen_b64, "claude-opus-5-5", 4.00, 20.00)
