@@ -4,6 +4,8 @@
 
 Proyecto: detección de propiedades en posible abandono en Barrio Brasil y Concha y Toro (Comunidad Brasil Alameda).
 
+La miniaplicación evalúa cada propiedad a partir de la foto de su fachada: el modelo busca señales visibles de posible abandono, como ventanas tapiadas, malezas o vegetación en el techo, grafitis o pintura descascarada, y con esas señales mi código calcula un puntaje de abandono de 0 a 100.
+
 ## Modelo elegido
 
 **Claude Opus 5.5** (`claude-opus-5-5`), de Anthropic, usado a través de la API de Claude (`POST /v1/messages`).
