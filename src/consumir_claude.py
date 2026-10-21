@@ -11,6 +11,7 @@ MAX_TOKENS = 1000
 # Precios de claude-opus-5-5 en USD por millón de tokens (revisados el 2026-10-19)
 PRECIO_ENTRADA = 4.00
 PRECIO_SALIDA = 20.00
+SYSTEM_INSTRUCTION= "Eres un experto en arquitectura y urbanismo, con un enorme conocimiento del Barrio Brasil y Concha y Toro de Santiago. Responde forma precisa y concisa, en máximo 5 líneas, y con un lenguaje claro y comprensible para cualquier persona."
 
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
@@ -29,6 +30,7 @@ def armar_peticion(pregunta):
     body = {
         "model": MODELO,
         "max_tokens": MAX_TOKENS,
+        "system": SYSTEM_INSTRUCTION,
         "messages": [
             {"role": "user", "content": pregunta}
         ],
@@ -77,8 +79,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     return costo_total
 
 
-# Prueba de conexión comentada: al importar este archivo desde medir_latencia.py
-# se ejecutaría y haría una petición extra
-# texto, costo = obtener_dato_de_prueba("Confirma brevemente que la conexión funciona correctamente.")
-# print(texto)
-# print(f"Costo estimado: ${costo:.6f} USD")
+texto, costo = obtener_dato_de_prueba("Cuentame lo que sabes de la arquitectura de Barrio Brasil y Concha y Toro de Santiago")
+print(texto)
+print(f"Costo estimado: ${costo:.6f} USD")
+
