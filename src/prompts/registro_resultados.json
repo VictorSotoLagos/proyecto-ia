@@ -1,0 +1,18 @@
+{
+  "clasificar_solicitud": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "extraer_direccion": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "extraer_criterios_busqueda": {
+    "exitos": 3,
+    "intentos": 3
+  },
+  "evaluar_fachada": {
+    "exitos": 3,
+    "intentos": 3
+  }
+}

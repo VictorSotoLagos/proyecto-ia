@@ -8,12 +8,11 @@ def leer_imagen_base64(ruta):
     with open(ruta, "rb") as archivo:
         return base64.standard_b64encode(archivo.read()).decode("utf-8")
 
-def medir_latencia(pregunta, imagen_b64, modelo, precio_entrada, precio_salida):
+def medir_latencia(pregunta, system_instruction, imagen_b64, modelo, precio_entrada, precio_salida):
     latencias = []
     costos = []
     for i in range(4):
-        url, headers, body = armar_peticion(pregunta)
-        body["model"] = modelo  # cambiamos el modelo que se va a medir
+        url, headers, body = armar_peticion(modelo, pregunta, system_instruction)
         # Enviamos la foto y la pregunta juntas: el mensaje pasa a ser una lista de dos bloques
         body["messages"][0]["content"] = [
             {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": imagen_b64}},
@@ -47,7 +46,10 @@ imagen_b64 = leer_imagen_base64("docs/fachada-almirante-barroso-256.png")
 # Misma pregunta y misma foto para los tres modelos
 pregunta = "Analiza esta foto de Google Street View de la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil, Santiago. ¿Qué señales de posible abandono ves (por ejemplo: ventanas tapiadas, malezas, grafitis, pintura descascarada) y qué tan fuerte es la evidencia? Responde en máximo 5 líneas."
 
+# Misma instrucción de sistema que usaba armar_peticion antes de recibirla como parámetro
+system_instruction = "Eres un experto en arquitectura y urbanismo, con un enorme conocimiento del Barrio Brasil y Concha y Toro de Santiago. Responde forma precisa y concisa, en máximo 5 líneas, y con un lenguaje claro y comprensible para cualquier persona."
+
 # Precios en USD por millón de tokens (página de precios de Anthropic, revisada el 2026-10-20)
-medir_latencia(pregunta, imagen_b64, "claude-haiku-5-5", 0.10, 0.50)
-medir_latencia(pregunta, imagen_b64, "claude-sonnet-5-5", 2.00, 10.00)
-medir_latencia(pregunta, imagen_b64, "claude-opus-5-5", 4.00, 20.00)
+medir_latencia(pregunta, system_instruction, imagen_b64, "claude-haiku-5-5", 0.10, 0.50)
+medir_latencia(pregunta, system_instruction, imagen_b64, "claude-sonnet-5-5", 2.00, 10.00)
+medir_latencia(pregunta, system_instruction, imagen_b64, "claude-opus-5-5", 4.00, 20.00)
