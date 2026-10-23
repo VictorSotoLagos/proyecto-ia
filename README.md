@@ -89,7 +89,7 @@ El texto de `descripcion` cambia en cada ejecución; la estructura del JSON no. 
 ### 2. Probar la consistencia del banco de prompts
 
 ```
-python src/consistencia.py
+python src/prompts/test_consistencia.py
 ```
 
 Ejecuta 3 veces cada uno de los 4 prompts del banco, valida que cada respuesta sea un JSON con las claves esperadas y guarda el resultado en `src/prompts/registro_resultados.json`. Además de una línea por intento, muestra este resumen (salida real del 22-10-2026):
@@ -111,7 +111,7 @@ python src/medir_latencia.py
 
 Envía 4 veces la misma foto y la misma pregunta a Claude Haiku 5.5, Claude Sonnet 5.5 y Claude Opus 5.5, y muestra la latencia, el costo y la respuesta de cada intento. Los resultados están documentados en [docs/comparacion_modelos.md](docs/comparacion_modelos.md). Costo aproximado: US$0,12 por ejecución (13 peticiones).
 
-> Nota: `consistencia.py` y `medir_latencia.py` importan funciones de `consumir_claude.py`, y al importarlo se ejecuta también su prueba final. Por eso ambos muestran primero la evaluación de la foto de prueba (y hacen una petición más).
+> Nota: `test_consistencia.py` y `medir_latencia.py` importan funciones de `consumir_claude.py`, y al importarlo se ejecuta también su prueba final. Por eso ambos muestran primero la evaluación de la foto de prueba (y hacen una petición más).
 
 ## Estructura del proyecto
 
@@ -119,10 +119,10 @@ Envía 4 veces la misma foto y la misma pregunta a Claude Haiku 5.5, Claude Sonn
 proyecto-ia/
 ├── src/
 │   ├── consumir_claude.py        # módulo principal: arma, envía y procesa la petición a Claude
-│   ├── consistencia.py           # prueba de consistencia del banco de prompts
 │   ├── medir_latencia.py         # comparación de latencia y costo entre modelos
 │   └── prompts/
 │       ├── banco.py              # banco de 4 prompts, cada uno con su esquema JSON
+│       ├── test_consistencia.py  # prueba de consistencia del banco de prompts
 │       └── registro_resultados.json   # resultado de la prueba de consistencia
 ├── docs/
 │   ├── decision-arquitectura.md       # decisión de arquitectura y elección de modelo

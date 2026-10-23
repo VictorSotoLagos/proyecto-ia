@@ -1,5 +1,12 @@
 import json
+import sys
 import time
+
+# Este script vive en src/prompts/ y usa funciones de consumir_claude.py, que está en src/.
+# Python busca tus módulos en la carpeta del script, así que le agregamos la carpeta src/
+# (por eso, como todo el proyecto, se ejecuta desde la carpeta raíz).
+sys.path.append("src")
+
 from prompts.banco import BANCO_DE_PROMPTS
 from consumir_claude import MODELO, armar_peticion, enviar_peticion, extraer_texto, parsear_respuesta_json, leer_imagen_base64
 
