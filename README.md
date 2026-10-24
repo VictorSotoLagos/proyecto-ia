@@ -170,6 +170,14 @@ Resultado de la prueba de consistencia del 22-10-2026: 12 de 12 respuestas váli
 - [Comparación de modelos con datos reales](docs/comparacion_modelos.md)
 - [Diagrama de arquitectura](docs/diagrama-arquitectura-miniapp.png)
 
+## Registro del ensayo de instalación limpia
+
+- Fecha: 2026-10-24
+- Cómo se hizo: se clonó el repositorio desde GitHub en una carpeta nueva (`prueba-gate1`), con un entorno virtual nuevo y el Python del sistema (3.14.8), siguiendo solo las instrucciones de este README para Windows (PowerShell).
+- Encontrado: sin hallazgos. `pip install -r requirements.txt` instaló todo sin errores, `.env` no aparece en `git status`, `python prueba_env.py` imprimió `True` y `python src/consumir_claude.py` devolvió la evaluación de la fachada sin errores.
+- Corregido: nada que corregir.
+- Resultado: el proyecto se instala y se ejecuta sin intervención manual.
+
 ## Estado actual y próximos pasos
 
 Este es el prototipo del Gate 1. Según el diagrama de arquitectura, faltan dos piezas:
