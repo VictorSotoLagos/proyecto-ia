@@ -101,7 +101,7 @@ extraer_criterios_busqueda: 3/3 respuestas válidas
 evaluar_fachada: 3/3 respuestas válidas
 ```
 
-Costo aproximado: entre US$0,10 y US$0,15 por ejecución (13 peticiones).
+Costo aproximado: US$0,10 por ejecución (12 peticiones).
 
 ### 3. Comparar modelos
 
@@ -109,9 +109,7 @@ Costo aproximado: entre US$0,10 y US$0,15 por ejecución (13 peticiones).
 python src/medir_latencia.py
 ```
 
-Envía 4 veces la misma foto y la misma pregunta a Claude Haiku 5.5, Claude Sonnet 5.5 y Claude Opus 5.5, y muestra la latencia, el costo y la respuesta de cada intento. Los resultados están documentados en [docs/comparacion_modelos.md](docs/comparacion_modelos.md). Costo aproximado: US$0,12 por ejecución (13 peticiones).
-
-> Nota: `test_consistencia.py` y `medir_latencia.py` importan funciones de `consumir_claude.py`, y al importarlo se ejecuta también su prueba final. Por eso ambos muestran primero la evaluación de la foto de prueba (y hacen una petición más).
+Envía 4 veces la misma foto y la misma pregunta a Claude Haiku 5.5, Claude Sonnet 5.5 y Claude Opus 5.5, y muestra la latencia, el costo y la respuesta de cada intento. Los resultados están documentados en [docs/comparacion_modelos.md](docs/comparacion_modelos.md). Costo aproximado: US$0,10 por ejecución (12 peticiones).
 
 ## Estructura del proyecto
 
@@ -147,7 +145,7 @@ El módulo consume la API de Claude (`POST https://api.anthropic.com/v1/messages
 |---|---|
 | `leer_imagen_base64(ruta)` | Lee la foto y la convierte a base64 para enviarla dentro del JSON |
 | `armar_peticion(modelo, pregunta, system_instruction, response_schema=None, imagen_b64=None)` | Arma la URL, los headers y el body: el prompt de sistema va separado de la pregunta, y el esquema JSON y la foto son opcionales |
-| `enviar_peticion(url, headers, body)` | Envía la petición y maneja los errores de conexión y de tiempo de espera |
+| `enviar_peticion(url, headers, body)` | Envía la petición, maneja los errores de conexión y de tiempo de espera, y revisa el código de estado de la API: 401/403 (API key inválida), 429 (límite de solicitudes) y 5xx (error del proveedor) |
 | `extraer_texto(datos)` | Si la API devolvió un error, muestra su mensaje; si no, devuelve el texto de la respuesta |
 | `parsear_respuesta_json(texto, claves_requeridas)` | Limpia la respuesta, la convierte en diccionario y valida que traiga las claves esperadas |
 | `calcular_costo(datos, precio_entrada, precio_salida)` | Calcula el costo en USD a partir de `usage` (los tokens de salida ya incluyen el razonamiento del modelo) |

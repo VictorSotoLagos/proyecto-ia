@@ -1,23 +1,13 @@
-import base64
 import time
 
-from consumir_claude import armar_peticion, enviar_peticion, extraer_texto, calcular_costo
-
-def leer_imagen_base64(ruta):
-    # Las imágenes viajan dentro del JSON como texto en base64
-    with open(ruta, "rb") as archivo:
-        return base64.standard_b64encode(archivo.read()).decode("utf-8")
+from consumir_claude import armar_peticion, enviar_peticion, extraer_texto, calcular_costo, leer_imagen_base64
 
 def medir_latencia(pregunta, system_instruction, imagen_b64, modelo, precio_entrada, precio_salida):
     latencias = []
     costos = []
     for i in range(4):
-        url, headers, body = armar_peticion(modelo, pregunta, system_instruction)
-        # Enviamos la foto y la pregunta juntas: el mensaje pasa a ser una lista de dos bloques
-        body["messages"][0]["content"] = [
-            {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": imagen_b64}},
-            {"type": "text", "text": pregunta},
-        ]
+        # armar_peticion envía la foto y la pregunta juntas (sin esquema JSON: aquí se compara texto libre)
+        url, headers, body = armar_peticion(modelo, pregunta, system_instruction, imagen_b64=imagen_b64)
         inicio = time.perf_counter()
         respuesta_json = enviar_peticion(url, headers, body)
         fin = time.perf_counter()

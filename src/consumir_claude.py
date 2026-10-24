@@ -68,6 +68,18 @@ def enviar_peticion(url, headers, body):
         raise RuntimeError("Se agotó el tiempo de espera. Intenta de nuevo en unos momentos.")
     except requests.exceptions.RequestException:
         raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
+
+    # Primero se revisa el código de estado: si la API respondió con un error, se detiene aquí
+    if respuesta.status_code in(401 , 403):
+        raise RuntimeError("La API Key es inválida o no tiene permisos para usar este modelo.")
+    if respuesta.status_code >= 500:
+        raise RuntimeError("El proveedor no pudo procesar la solicitud. Intenta de nuevo en unos segundos.  ")
+    if respuesta.status_code == 429:
+        raise RuntimeError("Se superó el límite de solicitudes. Intenta de nuevo en unos segundos.")
+
+    if respuesta.status_code != 200:
+        raise RuntimeError(f"La API respondió con un error: {respuesta.status_code} - {respuesta.text}")
+
     try:
         return respuesta.json()
     except requests.exceptions.JSONDecodeError:
@@ -119,6 +131,7 @@ def parsear_respuesta_json(texto, claves_requeridas=None):
         datos = json.loads(texto_limpio)
     except json.JSONDecodeError:
         raise ValueError("La respuesta del modelo no es JSON válido")
+    
     if claves_requeridas:
         for clave in claves_requeridas:
             if clave not in datos:
@@ -126,12 +139,13 @@ def parsear_respuesta_json(texto, claves_requeridas=None):
     return datos
 
 
-try:
-    # Foto real de Google Street View de Almirante Barroso 256 (correr desde la carpeta raíz del proyecto)
-    imagen_b64 = leer_imagen_base64("docs/fachada-almirante-barroso-256.png")
-    respuesta, costo = obtener_dato_de_prueba("Evalúa la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil.", imagen_b64)
-    print(respuesta)
-    print(f"Costo estimado: ${costo:.6f} USD")
-except (ValueError, RuntimeError) as error:
-    print("No se pudo completar la operación:", error)
+if __name__ == "__main__": # Solo se ejecuta al correr este archivo directamente, NO cuando otro archivo lo importa
+    try:
+        # Foto real de Google Street View de Almirante Barroso 256 (correr desde la carpeta raíz del proyecto)
+        imagen_b64 = leer_imagen_base64("docs/fachada-almirante-barroso-256.png")
+        respuesta, costo = obtener_dato_de_prueba("Evalúa la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil.", imagen_b64)
+        print(respuesta)
+        print(f"Costo estimado: ${costo:.6f} USD")
+    except (ValueError, RuntimeError) as error:
+        print("No se pudo completar la operación:", error)
 
