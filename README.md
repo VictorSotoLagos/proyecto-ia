@@ -4,6 +4,18 @@ Miniaplicación para la Comunidad Brasil Alameda: envía a **Claude Opus 5.5** (
 
 Proyecto del Gate 1 de la Especialización en Desarrollo con IA Generativa (Accenture · Skillnest).
 
+## Formas de usar la miniaplicación
+
+El usuario podrá pedirle a la miniaplicación una evaluación de tres formas:
+
+| Petición del usuario | Ejemplo | De dónde sale la foto | En el Gate 1 |
+|---|---|---|---|
+| Evaluar la foto de una fachada | La foto de la propiedad de calle Almirante Barroso 256 | La entrega el usuario | ✅ Funciona: es la prueba de `src/consumir_claude.py` |
+| Revisar una dirección | «Revisa la casa de Almirante Barroso 256, en Barrio Brasil» | Google Street View | Parcial: el prompt `extraer_direccion` ya obtiene la calle y el número; falta pedir la foto a Street View |
+| Buscar propiedades | «Dame una casa en Barrio Brasil de un piso, con ventanas tapiadas y malezas» | Google Street View, una foto por cada propiedad del barrio | Parcial: el prompt `extraer_criterios_busqueda` ya convierte el pedido en criterios; falta Street View |
+
+La conexión con Google Street View no es parte del Gate 1. Por eso, este prototipo trabaja con una foto de fachada cargada manualmente (guardada en `docs/`), que corresponde a la primera forma de uso. Las tres formas terminan en el mismo paso, el prompt `evaluar_fachada`, que es el que este prototipo ya prueba de punta a punta.
+
 ## Qué hace hoy
 
 `src/consumir_claude.py` envía a Claude la foto de prueba de la propiedad de calle Almirante Barroso 256 (Google Street View, mayo 2024), junto con un prompt de sistema, y recibe una respuesta JSON con una estructura fija:
@@ -181,13 +193,17 @@ Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas váli
 - Corregido: nada que corregir.
 - Resultado: el proyecto se instala y se ejecuta sin intervención manual.
 - Verificación de la versión final (2026-10-24): después de agregar el manejo de errores a `medir_latencia.py` y las mejoras del banco de prompts (`fachada_visible` y la señal 'vanos abiertos o vidrios rotos', commit `a7ea91a`), se trajo la última versión de GitHub a la carpeta del ensayo, cuyo entorno virtual se creó solo desde `requirements.txt`, y se ejecutaron los 4 comandos de este README contra la API real: `prueba_env.py` imprimió `True`, `consumir_claude.py` devolvió la evaluación de la fachada, `test_consistencia.py` dio 12/12 respuestas válidas y `medir_latencia.py` completó sus 12 peticiones, todos sin errores.
+- Revisión final (2026-10-24): se encontró que el README no indicaba la versión mínima de Python (las dependencias exigen 3.10 o superior) y que su ejemplo de la API key no coincidía con `.env.example`. Se corrigieron ambos (commit `08d5916`) y se subió `MAX_TOKENS` de 1000 a 2000 para dar margen al razonamiento del modelo (commit `2b9e700`). Con esa versión, los 4 comandos de este README volvieron a correr contra la API real sin errores (`test_consistencia.py`: 12/12).
+- Ensayo manual de la versión de entrega (2026-10-24): el autor clonó desde GitHub la versión `2b9e700` en una carpeta nueva, creó un entorno virtual nuevo con Python 3.14.8, instaló las dependencias de `requirements.txt`, configuró su `.env` y el programa funcionó sin errores. `.env` no aparece en `git status`.
 
 ## Estado actual y próximos pasos
 
 Este es el prototipo del Gate 1. Según el diagrama de arquitectura, faltan dos piezas:
 
-- `obtener_imagen_fachada()`: pedir a Google Street View la foto de cada dirección (usará `GOOGLE_MAPS_API_KEY`). Por ahora se usa la foto de prueba guardada en `docs/`.
+- `obtener_imagen_fachada()`: pedir a Google Street View la foto de cada dirección (usará `GOOGLE_MAPS_API_KEY`). La necesitan las peticiones por dirección y por búsqueda; por ahora se usa la foto de prueba guardada en `docs/`.
 - `calcular_puntaje()`: convertir las señales detectadas en un puntaje de abandono de 0 a 100.
+
+Para el Gate 2 también está planificada otra fuente de información: un Excel con las propiedades del barrio y la URL de la foto de cada fachada, para complementar las fotos de Street View. La idea es optimizar las peticiones: si la foto de una propiedad ya está en el Excel, la miniaplicación no necesita pedirla a la API de Street View.
 
 ---
 
