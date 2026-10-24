@@ -70,10 +70,10 @@ def enviar_peticion(url, headers, body):
         raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
 
     # Primero se revisa el código de estado: si la API respondió con un error, se detiene aquí
-    if respuesta.status_code in(401 , 403):
+    if respuesta.status_code in (401, 403):
         raise RuntimeError("La API Key es inválida o no tiene permisos para usar este modelo.")
     if respuesta.status_code >= 500:
-        raise RuntimeError("El proveedor no pudo procesar la solicitud. Intenta de nuevo en unos segundos.  ")
+        raise RuntimeError("El proveedor no pudo procesar la solicitud. Intenta de nuevo en unos segundos.")
     if respuesta.status_code == 429:
         raise RuntimeError("Se superó el límite de solicitudes. Intenta de nuevo en unos segundos.")
 

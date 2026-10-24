@@ -40,6 +40,9 @@ pregunta = "Analiza esta foto de Google Street View de la fachada de la propieda
 system_instruction = "Eres un experto en arquitectura y urbanismo, con un enorme conocimiento del Barrio Brasil y Concha y Toro de Santiago. Responde forma precisa y concisa, en máximo 5 líneas, y con un lenguaje claro y comprensible para cualquier persona."
 
 # Precios en USD por millón de tokens (página de precios de Anthropic, revisada el 2026-10-20)
-medir_latencia(pregunta, system_instruction, imagen_b64, "claude-haiku-5-5", 0.10, 0.50)
-medir_latencia(pregunta, system_instruction, imagen_b64, "claude-sonnet-5-5", 2.00, 10.00)
-medir_latencia(pregunta, system_instruction, imagen_b64, "claude-opus-5-5", 4.00, 20.00)
+try:
+    medir_latencia(pregunta, system_instruction, imagen_b64, "claude-haiku-5-5", 0.10, 0.50)
+    medir_latencia(pregunta, system_instruction, imagen_b64, "claude-sonnet-5-5", 2.00, 10.00)
+    medir_latencia(pregunta, system_instruction, imagen_b64, "claude-opus-5-5", 4.00, 20.00)
+except (ValueError, RuntimeError) as error:
+    print("No se pudo completar la operación:", error)
