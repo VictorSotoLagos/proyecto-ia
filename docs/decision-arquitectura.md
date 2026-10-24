@@ -4,7 +4,7 @@
 
 Proyecto: detección de propiedades en posible abandono en Barrio Brasil y Concha y Toro (Comunidad Brasil Alameda).
 
-La miniaplicación evalúa cada propiedad a partir de la foto de su fachada: el modelo busca señales visibles de posible abandono, como ventanas tapiadas, malezas o vegetación en el techo, grafitis o pintura descascarada, y con esas señales mi código calcula un puntaje de abandono de 0 a 100.
+La miniaplicación evalúa cada propiedad a partir de la foto de su fachada: el modelo busca señales visibles de posible abandono, como ventanas tapiadas, malezas o vegetación en el techo, grafitis o pintura descascarada, y con esas señales mi código calculará un puntaje de abandono de 0 a 100.
 
 ## Modelo elegido
 
