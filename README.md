@@ -1,42 +1,48 @@
 # Detección de propiedades en posible abandono — Barrio Brasil y Concha y Toro
 
-Miniaplicación para la Comunidad Brasil Alameda: envía a **Claude Opus 5.5** (API de Claude) la foto de la fachada de una propiedad y recibe, en formato JSON, las señales visibles de posible abandono (ventanas tapiadas, vanos abiertos o vidrios rotos, malezas, grafitis, pintura descascarada, revoque caído, techo dañado y escombros).
+Miniaplicación para la Comunidad Brasil Alameda que evalúa la fachada de una propiedad y detecta señales visibles de posible abandono: ventanas tapiadas, vanos abiertos o vidrios rotos, malezas, grafitis, pintura descascarada, revoque caído, techo dañado y escombros. La evaluación la hace **Claude Opus 5.5** a través de la API de Claude, y el resultado llega en formato JSON.
 
-Proyecto del Gate 1 de la Especialización en Desarrollo con IA Generativa (Accenture · Skillnest).
+Este repositorio corresponde al **Gate 1** de la Especialización en Desarrollo con IA Generativa (Accenture · Skillnest). La miniaplicación se construye por etapas a lo largo del programa: el Gate 1 entrega su base técnica y la evaluación de fachadas funcionando de punta a punta, y los Gates 2 y 3 suman las fuentes automáticas de fotos y el puntaje de abandono.
 
 ## Formas de usar la miniaplicación
 
-El usuario podrá pedirle a la miniaplicación una evaluación de tres formas:
+La miniaplicación ofrecerá tres formas de pedir una evaluación. Las tres terminan en el mismo paso: el prompt `evaluar_fachada`, que analiza la foto de la fachada.
 
-| Petición del usuario | Ejemplo | De dónde sale la foto | En el Gate 1 |
+| Forma de uso | Ejemplo | Qué incluye el Gate 1 | Qué se suma en los Gates 2 y 3 |
 |---|---|---|---|
-| Evaluar la foto de una fachada | La foto de la propiedad de calle Almirante Barroso 256 | La entrega el usuario | ✅ Funciona: es la prueba de `src/consumir_claude.py` |
-| Revisar una dirección | «Revisa la casa de Almirante Barroso 256, en Barrio Brasil» | Google Street View | Parcial: el prompt `extraer_direccion` ya obtiene la calle y el número; falta pedir la foto a Street View |
-| Buscar propiedades | «Dame una casa en Barrio Brasil de un piso, con ventanas tapiadas y malezas» | Google Street View, una foto por cada propiedad del barrio | Parcial: el prompt `extraer_criterios_busqueda` ya convierte el pedido en criterios; falta Street View |
+| Evaluar la foto de una fachada | Una foto de la propiedad de calle Almirante Barroso 256 | La evaluación completa de la foto con el prompt `evaluar_fachada` | Nada: ya funciona de punta a punta |
+| Revisar una dirección | «Revisa la casa de Almirante Barroso 256, en Barrio Brasil» | La interpretación de la dirección (calle, número y barrio) con el prompt `extraer_direccion` | Obtener la foto de esa dirección desde Google Street View |
+| Buscar propiedades | «Dame una casa en Barrio Brasil de un piso, con ventanas tapiadas y malezas» | La conversión del pedido en criterios de búsqueda (barrio, pisos y señales) con el prompt `extraer_criterios_busqueda` | Obtener las fotos de las propiedades del barrio, desde Street View o desde un Excel con sus URL, y quedarse con las que cumplen los criterios |
 
-La conexión con Google Street View no es parte del Gate 1. Por eso, este prototipo trabaja con una foto de fachada cargada manualmente (guardada en `docs/`), que corresponde a la primera forma de uso. Las tres formas terminan en el mismo paso, el prompt `evaluar_fachada`, que es el que este prototipo ya prueba de punta a punta.
+El prompt `clasificar_solicitud`, también incluido en el Gate 1, reconoce si el usuario dio una dirección o pidió una búsqueda.
 
-## Qué hace hoy
+Como la conexión con Google Street View corresponde a las próximas etapas, el Gate 1 trabaja con la primera forma de uso: una foto real de fachada, tomada de Google Street View y guardada en `docs/`. Así se prueba de punta a punta el paso que comparten las tres formas.
 
-`src/consumir_claude.py` envía a Claude la foto de prueba de la propiedad de calle Almirante Barroso 256 (Google Street View, mayo 2024), junto con un prompt de sistema, y recibe una respuesta JSON con una estructura fija:
+## Qué entrega el Gate 1
+
+`src/consumir_claude.py` envía a Claude la foto de prueba de la propiedad de calle Almirante Barroso 256 (tomada de Google Street View), junto con un prompt de sistema, y recibe una respuesta JSON con estas claves fijas:
 
 | Clave | Contenido |
 |---|---|
 | `fachada_visible` | `true` si la foto muestra la fachada con claridad; `false` si no sirve para evaluar (no es una fachada o no se ve bien) |
-| `senales` | Lista de señales de abandono visibles en la foto, con nombres fijos |
+| `senales` | Lista de las señales de abandono visibles en la foto, con nombres fijos |
 | `pisos` | Cantidad de pisos de la fachada |
 | `evidencia` | `ninguna`, `débil`, `moderada`, `fuerte` o `muy fuerte` |
 | `descripcion` | Máximo 2 oraciones con lo más grave que se ve |
 
 Además, calcula el costo de cada petición a partir de los tokens usados.
 
+El repositorio incluye también el banco de prompts con su prueba de consistencia y la comparación de modelos que justificó la elección de Claude Opus 5.5.
+
 ## Requisitos
 
-- Python 3.10 o superior (probado con Python 3.14.8). Las dependencias de `requirements.txt` no se instalan en versiones anteriores.
-- Git
+- Python 3.10 o superior (probado con Python 3.14.8): las dependencias de `requirements.txt` no se instalan en versiones anteriores.
+- Git.
 - Una API key de Anthropic, que se crea en la consola de Claude: <https://platform.claude.com>
 
 ## Instalación
+
+Clona el repositorio, crea un entorno virtual, instala las dependencias y crea tu archivo `.env` a partir de la plantilla.
 
 **Windows (PowerShell):**
 
@@ -62,29 +68,27 @@ cp .env.example .env
 
 ## Configurar la API key
 
-Abre el archivo `.env` que acabas de crear. Trae esta línea de ejemplo:
+Abre el archivo `.env` que acabas de crear. Contiene esta línea de ejemplo:
 
 ```
 ANTHROPIC_API_KEY=tu_llave_aqui
 ```
 
-Reemplaza `tu_llave_aqui` por tu API key real de Anthropic.
-
-Para confirmar que Python lee la clave, ejecuta desde la carpeta raíz del proyecto:
+Reemplaza `tu_llave_aqui` por tu API key de Anthropic. Para confirmar que Python la lee, ejecuta desde la carpeta raíz del proyecto:
 
 ```
 python prueba_env.py
 ```
 
-Debe imprimir `True`. El script solo indica si la variable existe: nunca muestra la clave.
+Debe imprimir `True`. El script solo indica si la variable existe; nunca muestra la clave.
 
-El archivo `.env` está excluido en `.gitignore`, así que nunca se sube al repositorio. `.env.example` es solo la plantilla, sin valores reales.
+El archivo `.env` está excluido en `.gitignore`, así que nunca se sube al repositorio. `.env.example` es solo una plantilla, sin valores reales.
 
 ## Cómo ejecutar
 
 > ⚠️ Ejecuta todos los comandos **desde la carpeta raíz del proyecto** (la que contiene este README) y con el entorno virtual activado. Las rutas a la foto de prueba y al registro de resultados son relativas a esa carpeta: si ejecutas desde `src/`, el programa no las encuentra.
 
-En macOS / Linux, usa `python3` en lugar de `python`. Cada ejecución hace peticiones reales a la API de Claude, con un costo aproximado indicado en cada caso.
+En macOS / Linux, usa `python3` en lugar de `python`. Cada comando hace peticiones reales a la API de Claude; su costo aproximado se indica en cada caso.
 
 ### 1. Evaluar la fachada de prueba (programa principal)
 
@@ -99,7 +103,7 @@ Salida real del 24-10-2026:
 Costo estimado: $0.019056 USD
 ```
 
-El texto de `descripcion` cambia en cada ejecución; la estructura del JSON no. Costo aproximado: US$0,02 por ejecución.
+El texto de `descripcion` y la lista exacta de `senales` pueden variar levemente entre ejecuciones; la estructura del JSON se mantiene siempre. Costo aproximado: US$0,02 por ejecución.
 
 ### 2. Probar la consistencia del banco de prompts
 
@@ -107,7 +111,7 @@ El texto de `descripcion` cambia en cada ejecución; la estructura del JSON no. 
 python src/prompts/test_consistencia.py
 ```
 
-Ejecuta 3 veces cada uno de los 4 prompts del banco, valida que cada respuesta sea un JSON con las claves esperadas y guarda el resultado en `src/prompts/registro_resultados.json`. Además de una línea por intento, muestra este resumen (salida real del 24-10-2026):
+Ejecuta 3 veces cada uno de los 4 prompts del banco, valida que cada respuesta sea un JSON con las claves esperadas y guarda el resultado en `src/prompts/registro_resultados.json`. Muestra una línea por intento y, al final, este resumen (salida real del 24-10-2026):
 
 ```
 clasificar_solicitud: 3/3 respuestas válidas
@@ -143,7 +147,7 @@ proyecto-ia/
 │   ├── diagrama-arquitectura-miniapp.png
 │   ├── fachada-almirante-barroso-256.png   # foto de prueba (Google Street View, mayo 2024)
 │   └── evidencia_peticion_autenticada.png
-├── tests/                        # vacía por ahora
+├── tests/                        # reservada para las pruebas automatizadas del Módulo 2
 ├── funcion1.py                   # ejercicio de práctica: función simple
 ├── funcion2.py                   # ejercicio de práctica: manejo de errores con requests
 ├── prueba_env.py                 # verifica que la API key se lee desde .env
@@ -154,21 +158,21 @@ proyecto-ia/
 
 ## Cómo funciona `consumir_claude.py`
 
-El módulo consume la API de Claude (`POST https://api.anthropic.com/v1/messages`) directamente con `requests`, y lee la API key desde `.env` con `python-dotenv`.
+El módulo consume la API de Claude (`POST https://api.anthropic.com/v1/messages`) directamente con `requests` y lee la API key desde `.env` con `python-dotenv`. Cada función cumple una sola tarea:
 
 | Función | Qué hace |
 |---|---|
 | `leer_imagen_base64(ruta)` | Lee la foto y la convierte a base64 para enviarla dentro del JSON |
-| `armar_peticion(modelo, pregunta, system_instruction, response_schema=None, imagen_b64=None)` | Arma la URL, los headers y el body: el prompt de sistema va separado de la pregunta, y el esquema JSON y la foto son opcionales |
+| `armar_peticion(modelo, pregunta, system_instruction, response_schema=None, imagen_b64=None)` | Arma la URL, los headers y el body. El prompt de sistema va separado de la pregunta; el esquema JSON y la foto son opcionales |
 | `enviar_peticion(url, headers, body)` | Envía la petición, maneja los errores de conexión y de tiempo de espera, y revisa el código de estado de la API: 401/403 (API key inválida), 429 (límite de solicitudes) y 5xx (error del proveedor) |
-| `extraer_texto(datos)` | Si la API devolvió un error, muestra su mensaje; si no, devuelve el texto de la respuesta |
+| `extraer_texto(datos)` | Devuelve el texto de la respuesta o, si la API respondió con un error, muestra su mensaje |
 | `parsear_respuesta_json(texto, claves_requeridas)` | Limpia la respuesta, la convierte en diccionario y valida que traiga las claves esperadas |
 | `calcular_costo(datos, precio_entrada, precio_salida)` | Calcula el costo en USD a partir de `usage` (los tokens de salida ya incluyen el razonamiento del modelo) |
 | `obtener_dato_de_prueba(pregunta, imagen_b64)` | Une todo lo anterior usando el prompt `evaluar_fachada` del banco |
 
 ## Banco de prompts
 
-`src/prompts/banco.py` reúne los prompts de la miniaplicación. Cada uno tiene su prompt de sistema, un ejemplo de entrada, las claves esperadas y su esquema JSON:
+`src/prompts/banco.py` reúne los cuatro prompts de la miniaplicación, que cubren sus tres formas de uso. Cada uno tiene su prompt de sistema, un ejemplo de entrada, las claves esperadas y su esquema JSON:
 
 | Prompt | Para qué sirve |
 |---|---|
@@ -177,7 +181,7 @@ El módulo consume la API de Claude (`POST https://api.anthropic.com/v1/messages
 | `extraer_criterios_busqueda` | Convierte una búsqueda en criterios: barrio, pisos y señales |
 | `evaluar_fachada` | Evalúa la foto de la fachada (el prompt principal de la miniaplicación) y avisa si la foto no sirve para evaluar |
 
-Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas válidas (3/3 en cada prompt). Detalle en [src/prompts/registro_resultados.json](src/prompts/registro_resultados.json).
+Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas válidas (3/3 en cada prompt). El detalle está en [src/prompts/registro_resultados.json](src/prompts/registro_resultados.json).
 
 ## Documentación
 
@@ -196,14 +200,13 @@ Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas váli
 - Revisión final (2026-10-24): se encontró que el README no indicaba la versión mínima de Python (las dependencias exigen 3.10 o superior) y que su ejemplo de la API key no coincidía con `.env.example`. Se corrigieron ambos (commit `08d5916`) y se subió `MAX_TOKENS` de 1000 a 2000 para dar margen al razonamiento del modelo (commit `2b9e700`). Con esa versión, los 4 comandos de este README volvieron a correr contra la API real sin errores (`test_consistencia.py`: 12/12).
 - Ensayo manual de la versión de entrega (2026-10-24): el autor clonó desde GitHub la versión `2b9e700` en una carpeta nueva, creó un entorno virtual nuevo con Python 3.14.8, instaló las dependencias de `requirements.txt`, configuró su `.env` y el programa funcionó sin errores. `.env` no aparece en `git status`.
 
-## Estado actual y próximos pasos
+## Próximas etapas
 
-Este es el prototipo del Gate 1. Según el diagrama de arquitectura, faltan dos piezas:
+El Gate 1 entrega la base técnica de la miniaplicación. Las próximas etapas del programa (Gate 2 y Gate 3) suman estas piezas; las dos primeras ya están en el diagrama de arquitectura:
 
-- `obtener_imagen_fachada()`: pedir a Google Street View la foto de cada dirección (usará `GOOGLE_MAPS_API_KEY`). La necesitan las peticiones por dirección y por búsqueda; por ahora se usa la foto de prueba guardada en `docs/`.
+- `obtener_imagen_fachada()`: obtener desde Google Street View la foto de cada dirección (usará `GOOGLE_MAPS_API_KEY`), para las formas de uso por dirección y por búsqueda.
 - `calcular_puntaje()`: convertir las señales detectadas en un puntaje de abandono de 0 a 100.
-
-Para el Gate 2 también está planificada otra fuente de información: un Excel con las propiedades del barrio y la URL de la foto de cada fachada, para complementar las fotos de Street View. La idea es optimizar las peticiones: si la foto de una propiedad ya está en el Excel, la miniaplicación no necesita pedirla a la API de Street View.
+- Un Excel con las propiedades del barrio y la URL de la foto de cada fachada (Gate 2), como fuente complementaria a Street View. Su objetivo es optimizar las peticiones: si la foto de una propiedad ya está en el Excel, la miniaplicación no necesita pedirla a la API de Street View.
 
 ---
 
