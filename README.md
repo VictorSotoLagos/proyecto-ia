@@ -59,6 +59,17 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
+**Windows (Git Bash):**
+
+```bash
+git clone https://github.com/VictorSotoLagos/proyecto-ia.git
+cd proyecto-ia
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
 **macOS / Linux:**
 
 ```bash
@@ -92,7 +103,7 @@ El archivo `.env` está excluido en `.gitignore`, así que nunca se sube al repo
 
 > ⚠️ Ejecuta todos los comandos **desde la carpeta raíz del proyecto** (la que contiene este README) y con el entorno virtual activado. Las rutas a la foto de prueba y al registro de resultados son relativas a esa carpeta: si ejecutas desde `src/`, el programa no las encuentra.
 
-En macOS / Linux, usa `python3` en lugar de `python`. Cada comando hace peticiones reales a la API de Claude; su costo aproximado se indica en cada caso.
+En Windows (PowerShell o Git Bash) usa `python`; en macOS / Linux, usa `python3`. Cada comando hace peticiones reales a la API de Claude; su costo aproximado se indica en cada caso.
 
 ### 1. Evaluar la fachada de prueba (programa principal)
 
