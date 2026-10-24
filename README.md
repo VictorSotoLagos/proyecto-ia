@@ -20,7 +20,7 @@ Además, calcula el costo de cada petición a partir de los tokens usados.
 
 ## Requisitos
 
-- Python 3 (probado con Python 3.14.8)
+- Python 3.10 o superior (probado con Python 3.14.8). Las dependencias de `requirements.txt` no se instalan en versiones anteriores.
 - Git
 - Una API key de Anthropic, que se crea en la consola de Claude: <https://platform.claude.com>
 
@@ -50,11 +50,13 @@ cp .env.example .env
 
 ## Configurar la API key
 
-Abre el archivo `.env` que acabas de crear y reemplaza el valor de ejemplo por tu API key real:
+Abre el archivo `.env` que acabas de crear. Trae esta línea de ejemplo:
 
 ```
-ANTHROPIC_API_KEY=pega-aquí-tu-api-key
+ANTHROPIC_API_KEY=tu_llave_aqui
 ```
+
+Reemplaza `tu_llave_aqui` por tu API key real de Anthropic.
 
 Para confirmar que Python lee la clave, ejecuta desde la carpeta raíz del proyecto:
 
