@@ -12,7 +12,8 @@ load_dotenv()
 URL_API = "https://api.anthropic.com/v1/messages"
 VERSION_API = "2023-06-01"
 MODELO = "claude-opus-5-5"
-MAX_TOKENS = 1000
+# Tope de tokens de salida por respuesta (incluye el razonamiento, que en Opus 5.5 siempre está activo)
+MAX_TOKENS = 2000
 # Precios de claude-opus-5-5 en USD por millón de tokens (revisados el 2026-10-19)
 PRECIO_ENTRADA = 4.00
 PRECIO_SALIDA = 20.00
@@ -53,7 +54,7 @@ def armar_peticion(modelo, pregunta, system_instruction, response_schema=None, i
 
     if imagen_b64 is not None:
         # Enviamos la foto y la pregunta juntas: el mensaje pasa a ser una lista de dos bloques
-        # (la foto de prueba es PNG; si usas una foto JPEG, cambia a "image/jpeg")
+        # (la foto de prueba es PNG; si se usa una foto JPEG, cambiar a "image/jpeg")
         body["messages"][0]["content"] = [
             {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": imagen_b64}},
             {"type": "text", "text": pregunta},
