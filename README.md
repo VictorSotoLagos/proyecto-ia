@@ -178,7 +178,7 @@ Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas váli
 - Encontrado: sin hallazgos. `pip install -r requirements.txt` instaló todo sin errores, `.env` no aparece en `git status`, `python prueba_env.py` imprimió `True` y `python src/consumir_claude.py` devolvió la evaluación de la fachada sin errores.
 - Corregido: nada que corregir.
 - Resultado: el proyecto se instala y se ejecuta sin intervención manual.
-- Verificación de la versión final (2026-10-24): después de agregar el manejo de errores a `medir_latencia.py` (commit `8daa7d2`), se repitió el ensayo con la última versión de GitHub y un entorno virtual nuevo, y se ejecutaron los 4 comandos de este README contra la API real: `prueba_env.py` imprimió `True`, `consumir_claude.py` devolvió la evaluación de la fachada, `test_consistencia.py` dio 12/12 respuestas válidas y `medir_latencia.py` completó sus 12 peticiones, todos sin errores.
+- Verificación de la versión final (2026-10-24): después de agregar el manejo de errores a `medir_latencia.py` y las mejoras del banco de prompts (`fachada_visible` y la señal 'vanos abiertos o vidrios rotos', commit `a7ea91a`), se trajo la última versión de GitHub a la carpeta del ensayo, cuyo entorno virtual se creó solo desde `requirements.txt`, y se ejecutaron los 4 comandos de este README contra la API real: `prueba_env.py` imprimió `True`, `consumir_claude.py` devolvió la evaluación de la fachada, `test_consistencia.py` dio 12/12 respuestas válidas y `medir_latencia.py` completó sus 12 peticiones, todos sin errores.
 
 ## Estado actual y próximos pasos
 
