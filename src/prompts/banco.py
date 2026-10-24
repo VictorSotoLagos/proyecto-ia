@@ -62,8 +62,10 @@ BANCO_DE_PROMPTS = [
             "JSON con las claves 'barrio' ('Barrio Brasil', 'Concha y Toro' o 'no indicado'), "
             "'pisos' (número entero; usa 0 si no lo menciona) y 'senales' (lista con las "
             "señales de abandono que pide, usando solo estos nombres: 'ventanas tapiadas', "
-            "'malezas', 'grafitis', 'pintura descascarada', 'revoque caído', 'techo dañado' "
-            "o 'escombros'; usa una lista vacía si no menciona ninguna)."
+            "'vanos abiertos o vidrios rotos', 'malezas', 'grafitis', 'pintura descascarada', "
+            "'revoque caído', 'techo dañado' o 'escombros'; si pide una señal parecida que no "
+            "está en la lista, usa el nombre más parecido; usa una lista vacía si no menciona "
+            "ninguna)."
         ),
         "ejemplo_usuario": "Dame una casa en Barrio Brasil que sea de un piso y que tenga ventanas tapiadas con madera, pintura descascarada y malezas en la entrada.",
         "claves_esperadas": ["barrio", "pisos", "senales"],
@@ -80,31 +82,36 @@ BANCO_DE_PROMPTS = [
     },
     # 4. Evalúa la foto de la fachada: es el prompt principal de la miniapp.
     #    Es el único con imagen: la clave "imagen" guarda la ruta de la foto de prueba.
+    #    Si "fachada_visible" es false, la foto no sirve para evaluar (no es una fachada o no se ve bien).
     {
         "nombre": "evaluar_fachada",
         "system_instruction": (
             "Eres un evaluador de fachadas para una aplicación que detecta propiedades en posible "
             "abandono en Barrio Brasil y Concha y Toro, Santiago. Analiza la foto de la fachada "
-            "y responde solo con un JSON con las claves 'senales' (lista con las señales de "
+            "y responde solo con un JSON con las claves 'fachada_visible' (true si la foto "
+            "muestra la fachada de una propiedad con claridad suficiente para evaluarla; false "
+            "si no es una fachada o no se ve bien), 'senales' (lista con las señales de "
             "abandono que se ven en la foto, usando solo estos nombres: 'ventanas tapiadas', "
-            "'malezas', 'grafitis', 'pintura descascarada', 'revoque caído', 'techo dañado' o "
-            "'escombros'; lista vacía si no ves ninguna), 'pisos' (número entero de pisos de "
-            "la fachada), 'evidencia' ('ninguna', 'débil', 'moderada', 'fuerte' o 'muy fuerte') "
-            "y 'descripcion' (máximo 2 oraciones con lo más grave que ves). Incluye solo lo "
+            "'vanos abiertos o vidrios rotos', 'malezas', 'grafitis', 'pintura descascarada', "
+            "'revoque caído', 'techo dañado' o 'escombros'; lista vacía si no ves ninguna), "
+            "'pisos' (número entero de pisos de la fachada; 0 si no se puede saber), "
+            "'evidencia' ('ninguna', 'débil', 'moderada', 'fuerte' o 'muy fuerte') y "
+            "'descripcion' (máximo 2 oraciones con lo más grave que ves). Incluye solo lo "
             "que se ve en la foto, sin suponer lo que no se ve."
         ),
         "ejemplo_usuario": "Evalúa la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil.",
         "imagen": "docs/fachada-almirante-barroso-256.png",
-        "claves_esperadas": ["senales", "pisos", "evidencia", "descripcion"],
+        "claves_esperadas": ["fachada_visible", "senales", "pisos", "evidencia", "descripcion"],
         "response_schema": {
             "type": "object",
             "properties": {
+                "fachada_visible": {"type": "boolean"},
                 "senales": {"type": "array", "items": {"type": "string"}},
                 "pisos": {"type": "integer"},
                 "evidencia": {"type": "string"},
                 "descripcion": {"type": "string"}
             },
-            "required": ["senales", "pisos", "evidencia", "descripcion"],
+            "required": ["fachada_visible", "senales", "pisos", "evidencia", "descripcion"],
             "additionalProperties": False
         }
     },

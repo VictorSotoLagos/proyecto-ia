@@ -1,6 +1,6 @@
 # Detección de propiedades en posible abandono — Barrio Brasil y Concha y Toro
 
-Miniaplicación para la Comunidad Brasil Alameda: envía a **Claude Opus 5.5** (API de Claude) la foto de la fachada de una propiedad y recibe, en formato JSON, las señales visibles de posible abandono (ventanas tapiadas, malezas, grafitis, pintura descascarada, revoque caído, techo dañado y escombros).
+Miniaplicación para la Comunidad Brasil Alameda: envía a **Claude Opus 5.5** (API de Claude) la foto de la fachada de una propiedad y recibe, en formato JSON, las señales visibles de posible abandono (ventanas tapiadas, vanos abiertos o vidrios rotos, malezas, grafitis, pintura descascarada, revoque caído, techo dañado y escombros).
 
 Proyecto del Gate 1 de la Especialización en Desarrollo con IA Generativa (Accenture · Skillnest).
 
@@ -10,6 +10,7 @@ Proyecto del Gate 1 de la Especialización en Desarrollo con IA Generativa (Acce
 
 | Clave | Contenido |
 |---|---|
+| `fachada_visible` | `true` si la foto muestra la fachada con claridad; `false` si no sirve para evaluar (no es una fachada o no se ve bien) |
 | `senales` | Lista de señales de abandono visibles en la foto, con nombres fijos |
 | `pisos` | Cantidad de pisos de la fachada |
 | `evidencia` | `ninguna`, `débil`, `moderada`, `fuerte` o `muy fuerte` |
@@ -77,11 +78,11 @@ En macOS / Linux, usa `python3` en lugar de `python`. Cada ejecución hace petic
 python src/consumir_claude.py
 ```
 
-Salida real del 22-10-2026:
+Salida real del 24-10-2026:
 
 ```
-{'senales': ['ventanas tapiadas', 'malezas', 'grafitis', 'pintura descascarada', 'revoque caído', 'techo dañado', 'escombros'], 'pisos': 1, 'evidencia': 'muy fuerte', 'descripcion': 'La fachada de un piso no muestra techo visible: hay una lona rota cubriendo parte de la estructura...'}
-Costo estimado: $0.018388 USD
+{'fachada_visible': True, 'senales': ['ventanas tapiadas', 'vanos abiertos o vidrios rotos', 'malezas', 'grafitis', 'pintura descascarada', 'revoque caído', 'techo dañado', 'escombros'], 'pisos': 1, 'evidencia': 'muy fuerte', 'descripcion': 'Fachada ornamentada de un piso con el techo aparentemente ausente o colapsado...'}
+Costo estimado: $0.019056 USD
 ```
 
 El texto de `descripcion` cambia en cada ejecución; la estructura del JSON no. Costo aproximado: US$0,02 por ejecución.
@@ -92,7 +93,7 @@ El texto de `descripcion` cambia en cada ejecución; la estructura del JSON no. 
 python src/prompts/test_consistencia.py
 ```
 
-Ejecuta 3 veces cada uno de los 4 prompts del banco, valida que cada respuesta sea un JSON con las claves esperadas y guarda el resultado en `src/prompts/registro_resultados.json`. Además de una línea por intento, muestra este resumen (salida real del 22-10-2026):
+Ejecuta 3 veces cada uno de los 4 prompts del banco, valida que cada respuesta sea un JSON con las claves esperadas y guarda el resultado en `src/prompts/registro_resultados.json`. Además de una línea por intento, muestra este resumen (salida real del 24-10-2026):
 
 ```
 clasificar_solicitud: 3/3 respuestas válidas
@@ -160,9 +161,9 @@ El módulo consume la API de Claude (`POST https://api.anthropic.com/v1/messages
 | `clasificar_solicitud` | Decide si el usuario dio una dirección, pidió una búsqueda u otra cosa |
 | `extraer_direccion` | Extrae la calle, el número y el barrio de una dirección |
 | `extraer_criterios_busqueda` | Convierte una búsqueda en criterios: barrio, pisos y señales |
-| `evaluar_fachada` | Evalúa la foto de la fachada (el prompt principal de la miniaplicación) |
+| `evaluar_fachada` | Evalúa la foto de la fachada (el prompt principal de la miniaplicación) y avisa si la foto no sirve para evaluar |
 
-Resultado de la prueba de consistencia del 22-10-2026: 12 de 12 respuestas válidas (3/3 en cada prompt). Detalle en [src/prompts/registro_resultados.json](src/prompts/registro_resultados.json).
+Resultado de la prueba de consistencia del 24-10-2026: 12 de 12 respuestas válidas (3/3 en cada prompt). Detalle en [src/prompts/registro_resultados.json](src/prompts/registro_resultados.json).
 
 ## Documentación
 
