@@ -65,18 +65,23 @@ def armar_peticion(modelo, pregunta, system_instruction, response_schema=None, i
 def enviar_peticion(url, headers, body):
     try:
         respuesta = requests.post(url, headers=headers, json=body, timeout=60)
-    except requests.exceptions.Timeout:
-        raise RuntimeError("Se agotó el tiempo de espera. Intenta de nuevo en unos momentos.")
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+        # Problema momentáneo de red: se puede reintentar
+        raise TimeoutError("No se pudo contactar al proveedor. Puede ser momentáneo.")
     except requests.exceptions.RequestException:
         raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos segundos.")
 
-    # Primero se revisa el código de estado: si la API respondió con un error, se detiene aquí
+    # Primero se revisa el código de estado: si la API respondió con un error, se detiene aquí.
+    # ValueError: la credencial falla y reintentar no sirve.
+    # TimeoutError: error momentáneo (límite de uso o falla del proveedor), conviene esperar y reintentar.
     if respuesta.status_code in (401, 403):
-        raise RuntimeError("La API Key es inválida o no tiene permisos para usar este modelo.")
+        raise ValueError("Credencial inválida o sin permiso. Revisa tu ANTHROPIC_API_KEY.")
     if respuesta.status_code >= 500:
-        raise RuntimeError("El proveedor no pudo procesar la solicitud. Intenta de nuevo en unos segundos.")
+        raise TimeoutError("El proveedor no pudo procesar la solicitud. Hay que esperar y reintentar.")
     if respuesta.status_code == 429:
-        raise RuntimeError("Se superó el límite de solicitudes. Intenta de nuevo en unos segundos.")
+        segundos = respuesta.headers.get("Retry-After")
+        mensaje = f"Se superó el límite de solicitudes. Reintentar en {segundos}s." if segundos else "Se superó el límite de solicitudes."
+        raise TimeoutError(mensaje)
 
     if respuesta.status_code != 200:
         raise RuntimeError(f"La API respondió con un error: {respuesta.status_code} - {respuesta.text}")
@@ -147,6 +152,6 @@ if __name__ == "__main__": # Solo se ejecuta al correr este archivo directamente
         respuesta, costo = obtener_dato_de_prueba("Evalúa la fachada de la propiedad de calle Almirante Barroso 256, Barrio Brasil.", imagen_b64)
         print(respuesta)
         print(f"Costo estimado: ${costo:.6f} USD")
-    except (ValueError, RuntimeError) as error:
+    except (ValueError, RuntimeError, TimeoutError) as error:
         print("No se pudo completar la operación:", error)
 

@@ -44,5 +44,5 @@ try:
     with open("src/prompts/registro_resultados.json", "w", encoding="utf-8") as archivo:
         json.dump(registro, archivo, indent=2, ensure_ascii=False)
 
-except (ValueError, RuntimeError) as error:
+except (ValueError, RuntimeError, TimeoutError) as error:
     print("No se pudo completar la operación:", error)
