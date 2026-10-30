@@ -1,0 +1,26 @@
+[
+  {
+    "consulta": "¿Qué es la tasación de una propiedad?",
+    "referencia": "La tasación es la estimación del valor comercial de una propiedad, realizada por un tasador.",
+    "respuesta": "La tasación de una propiedad es la valoración profesional que determina su valor de mercado según factores como la ubicación, el tamaño, el estado y las ventas comparables.",
+    "precision": 0.2857142857142857,
+    "cobertura": 0.5333333333333333,
+    "f1": 0.37209302325581395
+  },
+  {
+    "consulta": "¿Qué es el avalúo fiscal de una propiedad en Chile?",
+    "referencia": "El avalúo fiscal es el valor que el Servicio de Impuestos Internos asigna a una propiedad para calcular las contribuciones.",
+    "respuesta": "El avalúo fiscal es el valor que el Servicio de Impuestos Internos (SII) asigna a una propiedad en Chile para calcular las contribuciones y otros impuestos asociados, y suele ser menor que su valor comercial.",
+    "precision": 0.5714285714285714,
+    "cobertura": 1.0,
+    "f1": 0.7272727272727273
+  },
+  {
+    "consulta": "¿Qué es la fachada de un edificio?",
+    "referencia": "La fachada es el exterior visible de un edificio, especialmente su frente principal.",
+    "respuesta": "La fachada de un edificio es su cara exterior, especialmente la principal, que da a la calle y define su aspecto arquitectónico.",
+    "precision": 0.45454545454545453,
+    "cobertura": 0.7692307692307693,
+    "f1": 0.5714285714285714
+  }
+]
