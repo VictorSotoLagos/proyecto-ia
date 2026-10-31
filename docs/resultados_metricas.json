@@ -2,25 +2,209 @@
   {
     "consulta": "¿Qué es la tasación de una propiedad?",
     "referencia": "La tasación es la estimación del valor comercial de una propiedad, realizada por un tasador.",
-    "respuesta": "La tasación de una propiedad es la valoración profesional que determina su valor de mercado según factores como la ubicación, el tamaño, el estado y las ventas comparables.",
-    "precision": 0.2857142857142857,
-    "cobertura": 0.5333333333333333,
-    "f1": 0.37209302325581395
+    "respuesta": "La tasación de una propiedad es la valoración profesional que determina su valor de mercado según factores como la ubicación, el tamaño, el estado y las características del inmueble.",
+    "precision": 0.3103448275862069,
+    "cobertura": 0.6,
+    "f1": 0.4090909090909091
   },
   {
     "consulta": "¿Qué es el avalúo fiscal de una propiedad en Chile?",
     "referencia": "El avalúo fiscal es el valor que el Servicio de Impuestos Internos asigna a una propiedad para calcular las contribuciones.",
-    "respuesta": "El avalúo fiscal es el valor que el Servicio de Impuestos Internos (SII) asigna a una propiedad en Chile para calcular las contribuciones y otros impuestos asociados, y suele ser menor que su valor comercial.",
-    "precision": 0.5714285714285714,
-    "cobertura": 1.0,
-    "f1": 0.7272727272727273
+    "respuesta": "El avalúo fiscal es el valor que el Servicio de Impuestos Internos (SII) asigna a una propiedad para calcular el impuesto territorial (contribuciones) y otros tributos, y suele ser inferior a su valor comercial.",
+    "precision": 0.5588235294117647,
+    "cobertura": 0.95,
+    "f1": 0.7037037037037037
   },
   {
     "consulta": "¿Qué es la fachada de un edificio?",
     "referencia": "La fachada es el exterior visible de un edificio, especialmente su frente principal.",
-    "respuesta": "La fachada de un edificio es su cara exterior, especialmente la principal, que da a la calle y define su aspecto arquitectónico.",
-    "precision": 0.45454545454545453,
+    "respuesta": "La fachada de un edificio es su cara exterior, especialmente la principal, que suele dar a la calle y define su aspecto arquitectónico.",
+    "precision": 0.43478260869565216,
     "cobertura": 0.7692307692307693,
-    "f1": 0.5714285714285714
+    "f1": 0.5555555555555555
+  },
+  {
+    "consulta": "¿Qué es la Unidad de Fomento (UF)?",
+    "referencia": "La UF es una unidad de cuenta chilena que se reajusta según la inflación y se usa para fijar precios de propiedades y créditos hipotecarios.",
+    "respuesta": "La Unidad de Fomento (UF) es una unidad de cuenta chilena que se reajusta diariamente según la inflación (IPC) y se usa para fijar precios, créditos hipotecarios y contratos manteniendo su valor real.",
+    "precision": 0.7272727272727273,
+    "cobertura": 0.96,
+    "f1": 0.8275862068965517
+  },
+  {
+    "consulta": "¿Qué institución recauda las contribuciones en Chile?",
+    "referencia": "La Tesorería General de la República recauda las contribuciones de bienes raíces.",
+    "respuesta": "En Chile, las contribuciones (impuesto territorial) las recauda la Tesorería General de la República, a partir del avalúo fiscal que calcula el Servicio de Impuestos Internos (SII).",
+    "precision": 0.37037037037037035,
+    "cobertura": 0.8333333333333334,
+    "f1": 0.5128205128205128
+  },
+  {
+    "consulta": "¿En cuántas cuotas al año se pagan las contribuciones en Chile?",
+    "referencia": "Las contribuciones se pagan en cuatro cuotas al año: abril, junio, septiembre y noviembre.",
+    "respuesta": "En Chile, las contribuciones se pagan en **cuatro cuotas al año**, con vencimiento en abril, junio, septiembre y noviembre.",
+    "precision": 0.7368421052631579,
+    "cobertura": 1.0,
+    "f1": 0.8484848484848484
+  },
+  {
+    "consulta": "¿Qué es el Conservador de Bienes Raíces?",
+    "referencia": "El Conservador de Bienes Raíces es el registro donde se inscriben la propiedad y los gravámenes de los inmuebles.",
+    "respuesta": "El Conservador de Bienes Raíces es, en Chile, un auxiliar de la administración de justicia encargado de llevar los registros públicos de inmuebles, inscribiendo propiedades, hipotecas, gravámenes y prohibiciones para dar publicidad y certeza jurídica a su dominio.",
+    "precision": 0.3157894736842105,
+    "cobertura": 0.631578947368421,
+    "f1": 0.42105263157894735
+  },
+  {
+    "consulta": "¿Qué documento acredita quién es el dueño actual de una propiedad en Chile?",
+    "referencia": "El certificado de dominio vigente, emitido por el Conservador de Bienes Raíces, acredita quién es el dueño actual.",
+    "respuesta": "El **Certificado de Dominio Vigente**, emitido por el Conservador de Bienes Raíces correspondiente, acredita quién es el dueño actual de una propiedad en Chile.",
+    "precision": 0.75,
+    "cobertura": 1.0,
+    "f1": 0.8571428571428571
+  },
+  {
+    "consulta": "¿Qué es un crédito hipotecario?",
+    "referencia": "Un crédito hipotecario es un préstamo para comprar una propiedad, que queda como garantía del pago.",
+    "respuesta": "Un crédito hipotecario es un préstamo a largo plazo para comprar o construir una vivienda, en el que el propio inmueble queda como garantía de pago.",
+    "precision": 0.5384615384615384,
+    "cobertura": 0.875,
+    "f1": 0.6666666666666667
+  },
+  {
+    "consulta": "¿Qué es el pie en la compra de una vivienda?",
+    "referencia": "El pie es el pago inicial que hace el comprador con sus propios fondos, y el resto se financia con un crédito.",
+    "respuesta": "El pie es el **pago inicial** que hace el comprador con sus propios fondos, normalmente entre un 10 % y un 20 % del valor de la vivienda, mientras el resto se financia generalmente con un crédito hipotecario.",
+    "precision": 0.6111111111111112,
+    "cobertura": 1.0,
+    "f1": 0.7586206896551725
+  },
+  {
+    "consulta": "¿Qué es la plusvalía de una propiedad?",
+    "referencia": "La plusvalía es el aumento del valor de una propiedad a lo largo del tiempo.",
+    "respuesta": "La plusvalía de una propiedad es el aumento de su valor con el paso del tiempo, debido a factores como la ubicación, las mejoras en la zona o la demanda del mercado.",
+    "precision": 0.40625,
+    "cobertura": 0.8666666666666667,
+    "f1": 0.5531914893617021
+  },
+  {
+    "consulta": "¿Qué es el rol de avalúo de una propiedad?",
+    "referencia": "El rol de avalúo es el número que el Servicio de Impuestos Internos asigna a cada propiedad para identificarla.",
+    "respuesta": "El rol de avalúo es el número único que el Servicio de Impuestos Internos (SII) de Chile asigna a cada propiedad para identificarla y determinar su avalúo fiscal, base del cálculo de las contribuciones.",
+    "precision": 0.5588235294117647,
+    "cobertura": 1.0,
+    "f1": 0.7169811320754718
+  },
+  {
+    "consulta": "¿Qué es una zona típica en Chile?",
+    "referencia": "Una zona típica es un sector urbano protegido por la Ley de Monumentos Nacionales por su valor histórico o arquitectónico.",
+    "respuesta": "Una zona típica es una categoría de Monumento Nacional, establecida por la Ley 17.288 y declarada por el Consejo de Monumentos Nacionales, que protege conjuntos urbanos o rurales con un valor histórico, arquitectónico o ambiental significativo, como el Barrio Yungay en Santiago o el área histórica de Valparaíso.",
+    "precision": 0.3333333333333333,
+    "cobertura": 0.8,
+    "f1": 0.47058823529411764
+  },
+  {
+    "consulta": "¿Qué ley protege los monumentos nacionales en Chile?",
+    "referencia": "La Ley 17.288 de Monumentos Nacionales protege el patrimonio histórico y arquitectónico de Chile.",
+    "respuesta": "En Chile, los monumentos nacionales están protegidos por la **Ley N° 17.288 de Monumentos Nacionales** (1970), que administra el Consejo de Monumentos Nacionales.",
+    "precision": 0.391304347826087,
+    "cobertura": 0.6428571428571429,
+    "f1": 0.4864864864864865
+  },
+  {
+    "consulta": "¿En qué año se fundó Santiago de Chile?",
+    "referencia": "Santiago fue fundada en 1541 por Pedro de Valdivia.",
+    "respuesta": "Santiago de Chile fue fundada en 1541 por Pedro de Valdivia.",
+    "precision": 0.8181818181818182,
+    "cobertura": 1.0,
+    "f1": 0.9
+  },
+  {
+    "consulta": "¿En qué comuna está el Barrio Brasil?",
+    "referencia": "El Barrio Brasil está en la comuna de Santiago, en la Región Metropolitana.",
+    "respuesta": "El Barrio Brasil está en la comuna de **Santiago** (Santiago Centro), en la Región Metropolitana de Chile.",
+    "precision": 0.7647058823529411,
+    "cobertura": 1.0,
+    "f1": 0.8666666666666666
+  },
+  {
+    "consulta": "¿Qué es un muro medianero?",
+    "referencia": "Un muro medianero es una pared compartida entre dos propiedades vecinas.",
+    "respuesta": "Un muro medianero es una pared que separa dos propiedades colindantes y que, por lo general, pertenece en copropiedad a ambos dueños.",
+    "precision": 0.36363636363636365,
+    "cobertura": 0.7272727272727273,
+    "f1": 0.4848484848484849
+  },
+  {
+    "consulta": "¿Qué es una grieta estructural en una fachada?",
+    "referencia": "Una grieta estructural es una fisura que afecta la resistencia de los muros o elementos portantes del edificio.",
+    "respuesta": "Una grieta estructural en una fachada es una fisura que atraviesa elementos portantes del edificio, como muros, vigas o pilares, y que indica un problema en su estabilidad, por ejemplo asentamientos, sobrecargas o fallos de cimentación, a diferencia de una grieta superficial, que solo afecta al revestimiento.",
+    "precision": 0.3191489361702128,
+    "cobertura": 0.8333333333333334,
+    "f1": 0.4615384615384616
+  },
+  {
+    "consulta": "¿Qué es la humedad por capilaridad en un muro?",
+    "referencia": "La humedad por capilaridad es el agua del suelo que sube por los muros y daña su parte baja.",
+    "respuesta": "La humedad por capilaridad es el agua que asciende desde el suelo por los poros de los materiales de un muro, como ladrillo, piedra o mortero, y provoca manchas, salitre, desconchados y deterioro en su parte inferior.",
+    "precision": 0.3783783783783784,
+    "cobertura": 0.7368421052631579,
+    "f1": 0.5
+  },
+  {
+    "consulta": "¿Qué es un permiso de edificación?",
+    "referencia": "El permiso de edificación es la autorización de la Dirección de Obras Municipales para construir o ampliar una propiedad.",
+    "respuesta": "Un permiso de edificación es la autorización que otorga la autoridad municipal competente para construir, ampliar, modificar o demoler una obra, tras verificar que el proyecto cumple con la normativa urbanística y técnica vigente.",
+    "precision": 0.38235294117647056,
+    "cobertura": 0.6842105263157895,
+    "f1": 0.49056603773584906
+  },
+  {
+    "consulta": "¿Cuáles son las principales señales de que una propiedad se encuentra en abandono?",
+    "referencia": "Las principales señales de abandono son ventanas rotas o tapiadas, basura y maleza acumuladas, rayados, correspondencia sin retirar y ausencia de luz o movimiento por mucho tiempo.",
+    "respuesta": "Las principales señales de abandono de una propiedad son el césped y la maleza crecidos, el correo y la publicidad acumulados, las ventanas rotas o tapiadas, los servicios cortados, la basura o los grafitis, el deterioro estructural visible y la ausencia prolongada de actividad o de ocupantes.",
+    "precision": 0.3617021276595745,
+    "cobertura": 0.6296296296296297,
+    "f1": 0.4594594594594595
+  },
+  {
+    "consulta": "¿Una propiedad abandonada significa que no tiene dueño o que no tiene ocupantes?",
+    "referencia": "Una propiedad abandonada casi siempre tiene dueño: lo que le falta es uso y mantención, no un propietario.",
+    "respuesta": "Normalmente significa que **no tiene ocupantes ni recibe uso o mantenimiento**, pero casi siempre sigue teniendo un dueño legal, salvo que este renuncie formalmente a ella o la pierda por vía judicial.",
+    "precision": 0.25,
+    "cobertura": 0.4444444444444444,
+    "f1": 0.32
+  },
+  {
+    "consulta": "¿Qué diferencia hay entre una propiedad desocupada y una propiedad abandonada?",
+    "referencia": "Una propiedad desocupada solo no tiene ocupantes, mientras que una abandonada además está sin mantención y deteriorándose.",
+    "respuesta": "Una propiedad desocupada simplemente no tiene ocupantes en ese momento, pero su dueño la sigue cuidando y tiene la intención de usarla, venderla o alquilarla, mientras que una propiedad abandonada ha sido dejada por su dueño sin mantenimiento ni intención aparente de regresar o de ejercer sus derechos sobre ella.",
+    "precision": 0.24,
+    "cobertura": 0.7058823529411765,
+    "f1": 0.3582089552238806
+  },
+  {
+    "consulta": "¿A quién pertenece en Chile un inmueble que no tiene dueño?",
+    "referencia": "En Chile, un inmueble sin otro dueño pertenece al Estado, según el artículo 590 del Código Civil.",
+    "respuesta": "En Chile, según el artículo 590 del Código Civil, los inmuebles situados dentro del territorio nacional que carecen de otro dueño pertenecen al Estado (bienes fiscales).",
+    "precision": 0.5,
+    "cobertura": 0.7647058823529411,
+    "f1": 0.6046511627906976
+  },
+  {
+    "consulta": "¿Qué riesgos genera una propiedad abandonada para el barrio?",
+    "referencia": "Una propiedad abandonada puede atraer ocupaciones ilegales, delitos, incendios y plagas, y bajar el valor de las propiedades vecinas.",
+    "respuesta": "Una propiedad abandonada puede atraer delincuencia, vandalismo, ocupaciones ilegales, plagas, incendios y acumulación de basura, además de devaluar las viviendas cercanas.",
+    "precision": 0.5714285714285714,
+    "cobertura": 0.631578947368421,
+    "f1": 0.6
+  },
+  {
+    "consulta": "¿Qué señales en la fachada indican que una propiedad no recibe mantención?",
+    "referencia": "La pintura descascarada, las grietas, la humedad, los rayados y los vidrios rotos indican que una fachada no recibe mantención.",
+    "respuesta": "Pintura descascarada, grietas en muros, canaletas tapadas u oxidadas, maleza crecida, ventanas rotas o selladas, manchas de humedad y techos con tejas faltantes o hundidos.",
+    "precision": 0.2,
+    "cobertura": 0.25,
+    "f1": 0.22222222222222224
   }
 ]
