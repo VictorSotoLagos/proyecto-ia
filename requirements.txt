@@ -11,6 +11,8 @@ httpx2==2.13.1
 idna==3.20
 iniconfig==2.3.1
 jiter==0.17.0
+langchain-anthropic==1.7.9
+langchain-core==1.7.4
 packaging==26.3
 pluggy==1.7.0
 pydantic==2.14.1
