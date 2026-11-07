@@ -1,9 +1,14 @@
 from dotenv import load_dotenv
 import os
+import logging
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnableBranch, RunnablePassthrough
+from langchain_core.runnables import RunnableBranch, RunnablePassthrough, RunnableLambda
+
+# Registro de errores: logger.error muestra el mensaje como print(), pero lo marca con el nivel ERROR
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 # Rol del sistema que comparten las 4 plantillas, igual que el system_instruction del banco de prompts del Gate 1
 instruccion_sistema = (
@@ -76,16 +81,50 @@ def construir_cadena_con_enrutamiento(
     )
 
 
+# 4. Manejo de errores: el último respaldo de cada ruta, si fallan el modelo principal y el secundario
+respuesta_generica = RunnableLambda(
+    lambda x: (
+        "No pudimos revisar tu solicitud en este momento. "
+        "La Comunidad Brasil Alameda la va a revisar y te responderá pronto."
+    )
+)
+
+
+def construir_ruta_segura(ruta, ruta_secundaria):
+    # Si la ruta falla, prueba la misma ruta con el modelo secundario; si esa también falla, usa respuesta_generica
+    return ruta.with_fallbacks([ruta_secundaria, respuesta_generica])
+
+
+def procesar_mensaje_seguro(cadena, mensaje):
+    # Red de seguridad final: atrapa cualquier error que no cubran los fallbacks, como un fallo en la clasificación
+    try:
+        return cadena.invoke({"mensaje": mensaje})
+    except Exception as error:
+        logger.error(f"Error procesando mensaje: {error}")
+        return "No pudimos procesar tu mensaje en este momento. Intenta de nuevo más tarde."
+
+
 if __name__ == "__main__":
     load_dotenv()
     modelo = ChatAnthropic(model="claude-opus-5-5", anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"))
+    # Modelo de respaldo: más simple y con más chances de estar disponible si falla el principal
+    modelo_secundario = ChatAnthropic(model="claude-haiku-5-5", anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     paso_clasificacion = construir_paso_clasificacion(modelo)
     cadena_con_enrutamiento = construir_cadena_con_enrutamiento(
         paso_clasificacion=paso_clasificacion,
-        cadena_direccion=plantilla_direccion | modelo | StrOutputParser(),
-        cadena_busqueda=plantilla_busqueda | modelo | StrOutputParser(),
-        cadena_otro=plantilla_otro | modelo | StrOutputParser(),
+        cadena_direccion=construir_ruta_segura(
+            plantilla_direccion | modelo | StrOutputParser(),
+            plantilla_direccion | modelo_secundario | StrOutputParser(),
+        ),
+        cadena_busqueda=construir_ruta_segura(
+            plantilla_busqueda | modelo | StrOutputParser(),
+            plantilla_busqueda | modelo_secundario | StrOutputParser(),
+        ),
+        cadena_otro=construir_ruta_segura(
+            plantilla_otro | modelo | StrOutputParser(),
+            plantilla_otro | modelo_secundario | StrOutputParser(),
+        ),
     )
 
     # Un mensaje por cada ruta, tomados de las formas de uso del README
@@ -97,5 +136,5 @@ if __name__ == "__main__":
 
     for mensaje in mensajes:
         print("Mensaje:", mensaje)
-        print(cadena_con_enrutamiento.invoke({"mensaje": mensaje}))
+        print(procesar_mensaje_seguro(cadena_con_enrutamiento, mensaje))
         print()
