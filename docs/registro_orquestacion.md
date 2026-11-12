@@ -11,7 +11,7 @@ El flujo de enrutamiento del Bloque 19 (clasificación → `direccion`, `busqued
 | Capa | Dónde | Qué pasa si falla el paso |
 |---|---|---|
 | 1. Modelo secundario | Cada una de las 3 rutas, con `with_fallbacks` | La misma ruta, con el mismo prompt, se repite con Claude Haiku 5.5 |
-| 2. Respuesta genérica | Cada una de las 3 rutas, segundo elemento de `with_fallbacks` | Si Haiku también falla, `respuesta_generica` (un `RunnableLambda`) entrega un texto fijo |
+| 2. Respuesta genérica | Cada una de las 3 rutas, segundo elemento de `with_fallbacks` | Si Haiku también falla, `respuesta_generica` (un `RunnableLambda` con `fallback_con_log`) deja un aviso `WARNING` con el error y entrega un texto fijo |
 | 3. `try/except` general | `procesar_mensaje_seguro(cadena, mensaje)`, alrededor de `.invoke()` | Atrapa cualquier error que las capas 1 y 2 no cubren, lo registra con `logger.error` y devuelve un mensaje seguro |
 
 - `construir_ruta_segura(ruta, ruta_secundaria)` devuelve `ruta.with_fallbacks([ruta_secundaria, respuesta_generica])`. LangChain prueba las alternativas en orden y se detiene en la primera que funciona.
@@ -38,10 +38,11 @@ No pudimos procesar tu mensaje en este momento. Intenta de nuevo más tarde.
 Con la clave falsa falla primero la clasificación, antes de que `RunnableBranch` elija una ruta, así que actúa la capa 3. Para ver las capas 1 y 2, se invocó la ruta de dirección protegida directamente, con la misma clave falsa en Opus y en Haiku:
 
 ```
+WARNING:enrutamiento_solicitudes:Fallaron el modelo principal y el secundario. Activando respuesta genérica. Error: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, ...}
 No pudimos revisar tu solicitud en este momento. La Comunidad Brasil Alameda la va a revisar y te responderá pronto.
 ```
 
-Fallaron los dos modelos (error 401) y la ruta entregó `respuesta_generica` sin lanzar ningún error.
+Fallaron los dos modelos (error 401) y la ruta entregó `respuesta_generica` sin lanzar ningún error. La línea `WARNING` se agregó el 2026-11-10, siguiendo el `fallback_con_log` que la profe mostró en clase. `exception_key="error"` le pasa a la respuesta genérica el error del último modelo que falló, para poder registrarlo.
 
 ### Checklist del Bloque 20
 

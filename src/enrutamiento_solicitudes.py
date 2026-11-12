@@ -82,17 +82,22 @@ def construir_cadena_con_enrutamiento(
 
 
 # 4. Manejo de errores: el último respaldo de cada ruta, si fallan el modelo principal y el secundario
-respuesta_generica = RunnableLambda(
-    lambda x: (
+# Deja un aviso en el registro, para que el respaldo no oculte el problema (como fallback_con_log de la profe)
+def fallback_con_log(x):
+    logger.warning("Fallaron el modelo principal y el secundario. Activando respuesta genérica. Error: %s", x.get("error"))
+    return (
         "No pudimos revisar tu solicitud en este momento. "
         "La Comunidad Brasil Alameda la va a revisar y te responderá pronto."
     )
-)
+
+
+respuesta_generica = RunnableLambda(fallback_con_log)
 
 
 def construir_ruta_segura(ruta, ruta_secundaria):
-    # Si la ruta falla, prueba la misma ruta con el modelo secundario; si esa también falla, usa respuesta_generica
-    return ruta.with_fallbacks([ruta_secundaria, respuesta_generica])
+    # Si la ruta falla, prueba la misma ruta con el modelo secundario; si esa también falla, usa respuesta_generica.
+    # exception_key="error" agrega el error al diccionario que reciben los respaldos, para poder registrarlo
+    return ruta.with_fallbacks([ruta_secundaria, respuesta_generica], exception_key="error")
 
 
 def procesar_mensaje_seguro(cadena, mensaje):
