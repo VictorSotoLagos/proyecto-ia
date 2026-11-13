@@ -9,6 +9,8 @@ sys.path.append("src")
 from agente_comunidad import (
     consultar_propiedad,
     buscar_propiedades,
+    guardar_nota_vecino,
+    borrar_nota,
     reportar_a_municipalidad,
     registro_aprobaciones,
     obtener_historial,
@@ -50,6 +52,26 @@ def test_buscar_propiedades_sin_resultados():
     resultado = buscar_propiedades.invoke({"barrio": "Concha y Toro", "pisos": 3})
 
     assert "No se encontraron" in resultado
+
+
+# ---------- Herramienta de riesgo medio: escribe, pero se puede deshacer ----------
+
+def test_nota_se_guarda_se_muestra_al_consultar_y_se_puede_borrar():
+    resultado = guardar_nota_vecino.invoke(
+        {"direccion": "Almirante Barroso 256", "nota": "Tapiaron la puerta con tablas nuevas."}
+    )
+    assert "Nota guardada" in resultado
+    assert "Tapiaron la puerta con tablas nuevas." in consultar_propiedad.invoke({"direccion": "Almirante Barroso 256"})
+
+    # Deshacer: es lo que hace reversible a esta herramienta
+    assert borrar_nota("Almirante Barroso 256", 1) is True
+    assert "Notas de vecinos" not in consultar_propiedad.invoke({"direccion": "Almirante Barroso 256"})
+
+
+def test_nota_de_direccion_desconocida_no_se_guarda():
+    resultado = guardar_nota_vecino.invoke({"direccion": "Calle Inventada 999", "nota": "Ventanas rotas."})
+
+    assert "no se guardó" in resultado
 
 
 # ---------- Herramienta de riesgo alto ----------

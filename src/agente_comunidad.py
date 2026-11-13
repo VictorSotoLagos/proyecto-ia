@@ -26,6 +26,7 @@ PROPIEDADES = {
                     "pintura descascarada", "revoque caído", "techo dañado", "escombros"],
         "evidencia": "muy fuerte",
         "fuente": "foto de Google Street View (mayo 2024), evaluada con evaluar_fachada en el Gate 1",
+        "notas": [],  # Lo que los vecinos anotan con guardar_nota_vecino
     },
 }
 
@@ -41,10 +42,17 @@ def consultar_propiedad(direccion: str) -> str:
     for clave, propiedad in PROPIEDADES.items():
         if clave in direccion.lower():
             senales = ", ".join(propiedad["senales"])
-            return (
+            texto = (
                 f"{propiedad['direccion']} ({propiedad['barrio']}, {propiedad['pisos']} piso(s)). "
                 f"Señales: {senales}. Evidencia: {propiedad['evidencia']}. Fuente: {propiedad['fuente']}."
             )
+            # Si hay notas de vecinos, se agregan con su fecha
+            notas = []
+            for registro_nota in propiedad["notas"]:
+                notas.append(f"{registro_nota['fecha_hora'][:10]}: {registro_nota['nota']}")
+            if notas:
+                texto += " Notas de vecinos: " + "; ".join(notas) + "."
+            return texto
     return f"No hay una evaluación registrada para '{direccion}'. Para evaluarla se necesita una foto de su fachada."
 
 
@@ -86,6 +94,42 @@ def buscar_propiedades(barrio: str = "", pisos: int = 0, senal: str = "") -> str
     if not encontradas:
         return "No se encontraron propiedades registradas con esos criterios."
     return "Propiedades encontradas: " + "; ".join(encontradas)
+
+
+#=== Herramienta de riesgo medio: escribe en el registro, pero se puede deshacer ===
+class ArgumentosNota(BaseModel):
+    """Datos de la nota de un vecino sobre una propiedad."""
+    direccion: str = Field(
+        description="Calle y número de la propiedad, por ejemplo 'Almirante Barroso 256'."
+    )
+    nota: str = Field(
+        description="Lo que el vecino vio en la fachada, en una o dos oraciones. Solo lo que se ve desde la "
+                    "calle: sin nombres ni datos personales de quienes viven ahí."
+    )
+
+
+@tool(args_schema=ArgumentosNota)
+def guardar_nota_vecino(direccion: str, nota: str) -> str:
+    """
+    Guarda en el registro de una propiedad lo que un vecino vio en su fachada, por ejemplo un cambio desde la
+    última evaluación. Usar cuando el vecino pide anotar o dejar registrada una observación sobre una
+    propiedad. No envía nada fuera de la comunidad, y un coordinador puede borrar la nota si está equivocada.
+    """
+    for clave, propiedad in PROPIEDADES.items():
+        if clave in direccion.lower():
+            propiedad["notas"].append({"nota": nota, "fecha_hora": datetime.now().isoformat()})
+            return f"Nota guardada en el registro de {propiedad['direccion']}: {nota}"
+    return f"No hay una evaluación registrada para '{direccion}', así que la nota no se guardó."
+
+
+# No es una herramienta del agente: la usa un coordinador para deshacer una nota equivocada.
+# numero empieza en 1 (la primera nota de la propiedad)
+def borrar_nota(direccion: str, numero: int) -> bool:
+    for clave, propiedad in PROPIEDADES.items():
+        if clave in direccion.lower() and 1 <= numero <= len(propiedad["notas"]):
+            propiedad["notas"].pop(numero - 1)
+            return True
+    return False
 
 
 #=== Supervisión humana (Human in the Loop) ===
@@ -165,7 +209,7 @@ def reportar_a_municipalidad(direccion: str, motivo: str) -> str:
     return f"Reporte enviado a la Municipalidad de Santiago (simulado) para {direccion}."
 
 
-herramientas = [consultar_propiedad, buscar_propiedades, reportar_a_municipalidad]
+herramientas = [consultar_propiedad, buscar_propiedades, guardar_nota_vecino, reportar_a_municipalidad]
 
 
 #=== Memoria: un historial por cada vecino (session_id) ===
@@ -276,6 +320,10 @@ if __name__ == "__main__":
         ("vecino_2", "¿De qué casa te pregunté recién?"),
         ("vecino_3", "Busca casas de un piso con ventanas tapiadas en Barrio Brasil."),
         ("vecino_4", "¿Cómo me puedo sumar a la Comunidad Brasil Alameda?"),
+        # Riesgo medio: guarda una nota sin pedir aprobación. vecino_5 la ve, porque el registro es de toda la
+        # comunidad, aunque la memoria de la conversación sea de cada vecino
+        ("vecino_3", "Anota en Almirante Barroso 256 que hoy vi la puerta tapiada con tablas nuevas."),
+        ("vecino_5", "¿Hay notas de vecinos sobre Almirante Barroso 256?"),
         # Riesgo alto: pide aprobación en la consola (responde s o n antes de 15 segundos)
         ("vecino_1", "Quiero reportar a la Municipalidad la casa de Almirante Barroso 256, porque se le cayó el techo."),
     ]
