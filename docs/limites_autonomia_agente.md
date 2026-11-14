@@ -1,13 +1,16 @@
 # Límites de autonomía: asistente de la Comunidad Brasil Alameda
 
-Agente de `src/agente_comunidad.py`, que ayuda a los vecinos a revisar propiedades en posible abandono en Barrio Brasil y Concha y Toro. Este documento describe el agente tal como está construido y corrido en tres corridas reales: una el 2026-11-10 y dos el 2026-11-13. La traza real está en `trazas_agente.jsonl`, con 20 líneas. Las corridas y las pruebas están en [registro_agente.md](registro_agente.md).
+Agente de `src/agente_comunidad.py`, que ayuda a los vecinos a revisar propiedades en posible abandono en Barrio Brasil y Concha y Toro. Este documento describe el agente tal como está construido y corrido en cuatro corridas reales: una el 2026-11-10, dos el 2026-11-13 y una el 2026-11-14. La traza real está en `trazas_agente.jsonl`, con 29 líneas. Las corridas y las pruebas están en [registro_agente.md](registro_agente.md).
 
 ## Herramientas y nivel de riesgo
 
 - `consultar_propiedad`: **bajo** (solo lectura). Lee el registro de evaluaciones de fachadas y las notas de los vecinos, sin modificar nada. Si el agente la usa mal, el peor resultado es una respuesta equivocada sobre una casa, que el vecino puede comprobar mirando la fachada.
 - `buscar_propiedades`: **bajo** (solo lectura). Lee y filtra el registro por barrio, pisos y señal. Tampoco modifica nada, ni ejecuta ninguna acción fuera de la aplicación.
 - `guardar_nota_vecino`: **medio** (escritura reversible). Modifica el registro de la comunidad: agrega lo que un vecino vio en una fachada. Un error, como una nota en la casa equivocada o con algo que no corresponde, se corrige después: un coordinador la borra con `borrar_nota` y no queda ningún efecto fuera de la comunidad. El riesgo propio de esta herramienta es que una nota incluya datos personales de quienes viven en la casa. Por eso la descripción del argumento `nota` pide solo lo que se ve desde la calle, sin nombres ni datos personales.
-- `reportar_a_municipalidad`: **alto** (escritura irreversible). Es la única acción que sale de la comunidad y no se puede deshacer: una vez enviado, el reporte no se puede retirar. Un reporte equivocado (la dirección que no corresponde, o una casa que sí está habitada) puede afectar a sus dueños o a quienes viven ahí, y le quita credibilidad a la comunidad ante el municipio. El caso más delicado es una casa en aparente abandono que podría estar tomada, según testimonios de vecinos: ahí el reporte puede terminar en un desalojo, que afecta a personas que no participan en la conversación. Por ahora el envío es **simulado**: la herramienta no envía nada de verdad.
+- `reportar_a_municipalidad`: **alto** (escritura irreversible). Sale de la comunidad y no se puede deshacer: una vez enviado, el reporte no se puede retirar. Un reporte equivocado (la dirección que no corresponde, o una casa que sí está habitada) puede afectar a sus dueños o a quienes viven ahí, y le quita credibilidad a la comunidad ante el municipio. El caso más delicado es una casa en aparente abandono que podría estar tomada, según testimonios de vecinos: ahí el reporte puede terminar en un desalojo, que afecta a personas que no participan en la conversación. Por ahora el envío es **simulado**: la herramienta no envía nada de verdad.
+- `compartir_ficha_con_inversionista`: **alto** (escritura irreversible, con impacto económico). Entrega a un tercero la ficha de evaluación de una fachada, para que evalúe darle un nuevo uso a la propiedad. Una vez compartida, la información no se puede recuperar. Además, puede influir en el valor o en el futuro de la casa, y en sus dueños o habitantes. Como la comunidad busca atraer inversión al barrio, existe la tentación de presentar una casa como más abandonada de lo que está. Por eso la ficha va tal cual la evaluación y la decisión de enviarla la toma una persona.
+  - Lo que sale lo limita el código: `armar_ficha` incluye solo la dirección, barrio, pisos, señales, evidencia y la fuente de la foto. **Nunca incluye las notas de los vecinos**, donde pueden aparecer testimonios sobre quienes viven en la casa.
+  - El envío también es **simulado**.
 
 ## Herramientas que requieren aprobación humana
 
@@ -15,30 +18,37 @@ Agente de `src/agente_comunidad.py`, que ayuda a los vecinos a revisar propiedad
   - Criterio para aprobar: antes de responder "s", el coordinador verifica la casa en terreno. Revisa que la dirección corresponda, que la fachada siga como la registra la evaluación (la foto es de mayo de 2024) y si hay señales o testimonios de vecinos de que está habitada o tomada. Si podría estar tomada, no aprueba el reporte hasta confirmar su situación.
   - Cómo funciona: `esperar_aprobacion` muestra en la consola la dirección y el motivo, y espera una respuesta "s" o "n". Si nadie responde en 15 segundos, o no hay una consola desde donde responder, devuelve `False`: ante la duda, el reporte **no** se envía. Usa un hilo aparte, como el ejemplo de la clase, porque el `select.select()` del curso no funciona en Windows.
   - Cada decisión, aprobada o no, se guarda con `registrar_aprobacion` (herramienta, argumentos, resultado y fecha y hora), y la observación que recibe el agente dice si se envió o no.
-- `guardar_nota_vecino`: no requiere aprobación. Es reversible y no sale de la comunidad, y aprobar cada nota haría que el coordinador deje de leer con atención lo que sí importa, que es el reporte a la Municipalidad. En vez de aprobarse antes, todas las notas se revisan después en la traza (ver la sección siguiente).
+- `compartir_ficha_con_inversionista`: requiere aprobación por las mismas razones (es irreversible y afecta a terceros) y porque tiene impacto económico.
+  - Criterio para aprobar: el mismo de la verificación en terreno, más confirmar que el destinatario es un interesado real, conocido por la comunidad.
+  - Cómo funciona: usa la misma `esperar_aprobacion`, con el mismo valor seguro. El mensaje muestra **la ficha exacta que saldría**, para que el coordinador vea qué se comparte y con quién. Si la propiedad no está registrada, no hay nada que compartir y no se pide aprobación.
+- `guardar_nota_vecino`: no requiere aprobación. Es reversible y no sale de la comunidad, y aprobar cada nota haría que el coordinador deje de leer con atención lo que sí importa: las acciones que salen de la comunidad. En vez de aprobarse antes, todas las notas se revisan después en la traza (ver la sección siguiente).
 - `consultar_propiedad` y `buscar_propiedades`: no requieren aprobación. Solo leen, y pedir confirmación para cada consulta tendría el mismo problema.
 
-Verificación contra el código (2026-11-13), con el comando de la actividad:
+Verificación contra el código (2026-11-14), con el comando de la actividad:
 
 ```
 $ grep -n "esperar_aprobacion(" src/agente_comunidad.py
-139:def esperar_aprobacion(mensaje: str, tiempo_limite_segundos: int = 15) -> bool:
-196:    aprobado = esperar_aprobacion(mensaje, tiempo_limite_segundos=15)
+146:def esperar_aprobacion(mensaje: str, tiempo_limite_segundos: int = 15) -> bool:
+203:    aprobado = esperar_aprobacion(mensaje, tiempo_limite_segundos=15)
+247:            aprobado = esperar_aprobacion(mensaje, tiempo_limite_segundos=15)
 ```
 
-La línea 139 es la definición, y la 196 es la llamada dentro de `reportar_a_municipalidad`, la única herramienta marcada como alto riesgo. Las pruebas confirman el comportamiento sin usar la API:
+La línea 146 es la definición. La 203 es la llamada dentro de `reportar_a_municipalidad` y la 247 la llamada dentro de `compartir_ficha_con_inversionista`: las dos herramientas marcadas como alto riesgo. Las pruebas confirman el comportamiento sin usar la API:
 
-- `test_reporte_no_se_envia_sin_aprobacion_y_queda_registrado`: sin aprobación el reporte no se envía, y el rechazo queda registrado.
+- `test_reporte_no_se_envia_sin_aprobacion_y_queda_registrado` y `test_ficha_no_se_comparte_sin_aprobacion_y_queda_registrado`: sin aprobación no sale nada, y el rechazo queda registrado.
+- `test_ficha_de_direccion_desconocida_no_pide_aprobacion`: si no hay nada que compartir, no se le pide nada al coordinador.
+- `test_ficha_que_sale_de_la_comunidad_no_incluye_notas_de_vecinos`: una nota guardada no aparece en la ficha.
 - `test_nota_se_guarda_se_muestra_al_consultar_y_se_puede_borrar`: una nota guardada se puede deshacer, que es lo que la hace de riesgo medio.
 
 Los dos resultados posibles de la aprobación quedaron en la traza real:
 
-- **Rechazado (líneas 6 y 20, 2026-11-10 y 2026-11-13):** no había nadie que respondiera en la consola, así que se aplicó el valor seguro. La observación dice "El reporte no se envió…" y `registro_aprobaciones` quedó con `'aprobado': False`.
-- **Aprobado (línea 12, 2026-11-13):** la observación dice "Reporte enviado a la Municipalidad de Santiago (simulado)…" y `registro_aprobaciones` quedó con `'aprobado': True`. El agente le aclaró al vecino que el envío fue simulado. Esta "s" **no la escribió una persona en vivo**: se envió por la entrada estándar (`printf 's\n' | python src/agente_comunidad.py`), con la autorización que el usuario dio en el chat para esa corrida de prueba. En un uso real, la debe responder un coordinador frente a la consola.
+- **Rechazado (líneas 6, 20, 28 y 29):** no había nadie que respondiera en la consola, así que se aplicó el valor seguro. Las observaciones dicen "El reporte no se envió…" o "La ficha no se compartió…", y `registro_aprobaciones` quedó con `'aprobado': False`. En la línea 28, el mensaje de aprobación mostró la ficha **sin** la nota que vecino_3 había guardado en la línea 26.
+- **Aprobado (línea 12, 2026-11-13, solo para el reporte):** la observación dice "Reporte enviado a la Municipalidad de Santiago (simulado)…" y `registro_aprobaciones` quedó con `'aprobado': True`. El agente le aclaró al vecino que el envío fue simulado. Esta "s" **no la escribió una persona en vivo**: se envió por la entrada estándar (`printf 's\n' | python src/agente_comunidad.py`), con la autorización que el usuario dio en el chat para esa corrida de prueba. En un uso real, la debe responder un coordinador frente a la consola.
 
 Lo que todavía **no** está resuelto:
 
-- **La verificación en terreno depende del coordinador:** el código no la exige ni la registra. El mensaje de aprobación muestra la dirección y el motivo, pero no le recuerda que debe verificar la casa antes de responder "s".
+- **El envío aprobado de la ficha no se ha probado en una corrida real.** En la corrida del 2026-11-14 nadie respondió, a propósito, para no aprobar en nombre de una persona. El rechazo sí está probado, y la prueba sin API confirma qué contiene la ficha.
+- **La verificación en terreno, y la del destinatario, dependen del coordinador:** el código no las exige ni las registra. El destinatario es el nombre que da el vecino, sin ninguna comprobación.
 - **La aprobación no identifica a quién aprobó:** solo registra que alguien escribió "s" en la consola donde corre el agente. En un uso real, la aprobación debería venir de un coordinador identificado, desde una interfaz aparte.
 - **`registro_aprobaciones` y las notas viven en memoria** y se pierden al cerrar el programa. Lo único que queda guardado es lo que registra `trazas_agente.jsonl`.
 - **Las notas no registran qué vecino las escribió**, y `borrar_nota` se usa desde Python, no desde una interfaz para coordinadores.
@@ -48,24 +58,26 @@ Lo que todavía **no** está resuelto:
 Cada consulta queda como una línea de `trazas_agente.jsonl`, escrita por `registrar_traza`, con `timestamp`, `session_id`, `entrada`, `acciones` (herramienta, argumentos y observación de cada paso) y `respuesta_final`.
 
 - **Frecuencia:**
-  - **Todas** las trazas con `reportar_a_municipalidad`, el mismo día en que ocurren, porque cada una es una acción de riesgo alto.
+  - **Todas** las trazas con `reportar_a_municipalidad` o `compartir_ficha_con_inversionista`, el mismo día en que ocurren, porque cada una es una acción de riesgo alto.
   - **Todas** las trazas con `guardar_nota_vecino`, una vez por semana, porque modifican el registro que ven todos los vecinos y pueden traer datos personales.
   - Una muestra de **10 consultas de solo lectura por semana**, más cualquier sesión donde un vecino haya reclamado por una respuesta.
 - **Qué se busca** (patrones del Bloque 23 aplicados a este agente):
   1. **La misma herramienta repetida con argumentos iguales o parecidos**, dentro de una consulta o **entre consultas seguidas de la misma sesión**. El script `marcar_repeticiones_sospechosas` del curso solo compara herramientas dentro de una misma línea, así que no detectaría el caso que apareció aquí (ver abajo).
-  2. **`reportar_a_municipalidad` sin aprobación registrada:** la observación debe decir "Reporte enviado" o "El reporte no se envió", y los argumentos (dirección y motivo) deben corresponder a lo que pidió el vecino.
+  2. **Una herramienta de riesgo alto sin aprobación registrada:** la observación debe decir si se envió o no ("Reporte enviado" / "El reporte no se envió", "Ficha compartida" / "La ficha no se compartió"). Los argumentos deben corresponder a lo que pidió el vecino, y una ficha compartida no debe traer notas de vecinos.
   3. **Una respuesta final que afirma algo que ninguna observación respalda:** por ejemplo, señales que la herramienta no devolvió, o afirmaciones sobre lo que el propio agente hizo antes.
   4. **Una nota con nombres o datos personales, o con algo que no se ve desde la calle**, o una nota guardada sin que el vecino pidiera anotar algo. Este patrón es propio de `guardar_nota_vecino`.
 
-Revisión de la traza real antes de entregar (2026-11-13). Hay al menos una herramienta de cada nivel de riesgo:
+Revisión de la traza real antes de entregar (2026-11-14). Hay al menos una herramienta de cada nivel de riesgo:
 
 ```
 $ wc -l trazas_agente.jsonl
-20 trazas_agente.jsonl
+29 trazas_agente.jsonl
 $ grep -c '"herramienta": "reportar_a_municipalidad"' trazas_agente.jsonl
-3
-$ grep -c '"herramienta": "guardar_nota_vecino"' trazas_agente.jsonl
+4
+$ grep -c '"herramienta": "compartir_ficha_con_inversionista"' trazas_agente.jsonl
 1
+$ grep -c '"herramienta": "guardar_nota_vecino"' trazas_agente.jsonl
+2
 ```
 
 | Línea | Sesión | Herramientas | Resultado de la revisión |
@@ -77,7 +89,7 @@ $ grep -c '"herramienta": "guardar_nota_vecino"' trazas_agente.jsonl
 | 5 | vecino_3 | `buscar_propiedades` | ⚠️ **Patrones 1 y 3.** Repitió la búsqueda de la línea 4 con los mismos argumentos, ante una pregunta que no la necesitaba ("¿Cómo me puedo sumar a la Comunidad?"). Además afirmó "te di ese resultado sin haber consultado el registro", lo que es falso según la línea 4 |
 | 6 | vecino_1 | `reportar_a_municipalidad` | ✅ La observación registra el rechazo ("El reporte no se envió…"); dirección y motivo corresponden al pedido |
 | 7 | vecino_1 | `consultar_propiedad` | ✅ La respuesta coincide con la observación |
-| 8 | vecino_1 | `consultar_propiedad` | ⚠️ **Patrón 1, más leve.** Volvió a consultar con los mismos argumentos de la línea 7 en el turno siguiente. La respuesta fue correcta, pero la llamada sobraba: las líneas 2 y 14 respondieron lo mismo solo con el historial |
+| 8 | vecino_1 | `consultar_propiedad` | ⚠️ **Patrón 1, más leve.** Volvió a consultar con los mismos argumentos de la línea 7 en el turno siguiente. La respuesta fue correcta, pero la llamada sobraba: las líneas 2, 14 y 22 respondieron lo mismo solo con el historial |
 | 9 | vecino_2 | ninguna | ✅ No mezcló la sesión con la de vecino_1 |
 | 10 | vecino_3 | `buscar_propiedades` | ✅ Argumentos correctos |
 | 11 | vecino_4 | ninguna | ✅ La pregunta general, en una sesión nueva, no usó herramientas. Dijo que no tenía la información, en vez de inventarla |
@@ -90,14 +102,23 @@ $ grep -c '"herramienta": "guardar_nota_vecino"' trazas_agente.jsonl
 | 18 | vecino_3 | `guardar_nota_vecino` | ✅ **Patrón 4 revisado:** el vecino pidió anotar, y la nota ("Hoy se vio la puerta tapiada con tablas nuevas.") describe solo la fachada, sin datos personales. El agente cambió levemente la redacción del vecino ("hoy vi" pasó a "hoy se vio") |
 | 19 | vecino_5 | `consultar_propiedad` | ✅ Otro vecino ve la nota de la línea 18: el registro es de toda la comunidad, aunque la memoria de la conversación sea de cada vecino |
 | 20 | vecino_1 | `reportar_a_municipalidad` | ✅ La observación registra el rechazo; dirección y motivo corresponden al pedido |
+| 21 | vecino_1 | `consultar_propiedad` | ✅ La respuesta coincide con la observación |
+| 22 | vecino_1 | ninguna | ✅ Respondió con la memoria, sin repetir la consulta |
+| 23 | vecino_2 | ninguna | ✅ No mezcló la sesión con la de vecino_1 |
+| 24 | vecino_3 | `buscar_propiedades` | ✅ Argumentos correctos |
+| 25 | vecino_4 | ninguna | ✅ Igual que la línea 11 |
+| 26 | vecino_3 | `guardar_nota_vecino` | ✅ **Patrón 4 revisado:** la nota ("Hoy un vecino vio la puerta tapiada con tablas nuevas.") describe solo la fachada, sin datos personales |
+| 27 | vecino_5 | `consultar_propiedad` | ✅ Muestra la nota de la línea 26 |
+| 28 | vecino_6 | `compartir_ficha_con_inversionista` | ✅ **Patrón 2 revisado:** la observación registra el rechazo ("La ficha no se compartió…") y el agente le dijo al vecino que no se envió nada. La ficha que mostró la aprobación no traía la nota de la línea 26 |
+| 29 | vecino_1 | `reportar_a_municipalidad` | ✅ La observación registra el rechazo; dirección y motivo corresponden al pedido |
 
-La causa de las líneas 5 y 8: la memoria guarda solo el texto de las respuestas anteriores, no las herramientas usadas. El agente no puede saber que su respuesta anterior venía del registro, y a veces vuelve a consultar. El patrón apareció en dos de las tres corridas, en turnos distintos, así que no es un caso aislado. Es la primera corrección pendiente (paso 4 de la sección siguiente).
+La causa de las líneas 5 y 8: la memoria guarda solo el texto de las respuestas anteriores, no las herramientas usadas. El agente no puede saber que su respuesta anterior venía del registro, y a veces vuelve a consultar. El patrón apareció en dos de las cuatro corridas, en turnos distintos, así que no es un caso aislado. Es la primera corrección pendiente (paso 4 de la sección siguiente).
 
 ## Qué hacer ante un comportamiento inesperado
 
-1. **Si `reportar_a_municipalidad` aparece en la traza sin una aprobación registrada, o con una dirección o motivo distintos a lo que pidió el vecino:**
+1. **Si una herramienta de riesgo alto aparece en la traza sin una aprobación registrada, o con argumentos distintos a lo que pidió el vecino:**
    - Desactivarla de inmediato: sacarla de la lista `herramientas` en `src/agente_comunidad.py`.
-   - Si el envío ya fuera real, avisar a la Municipalidad que el reporte fue un error.
+   - Si el envío ya fuera real, avisar a la Municipalidad que el reporte fue un error, o pedirle al destinatario de la ficha que no la use y la elimine.
 2. **Si una nota está equivocada o trae datos personales** (patrón 4):
    - Borrarla con `borrar_nota(direccion, numero)`.
    - Si vuelve a pasar, sacar `guardar_nota_vecino` de la lista `herramientas` hasta reforzar la descripción del argumento `nota` y volver a probar.

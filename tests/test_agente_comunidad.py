@@ -12,6 +12,9 @@ from agente_comunidad import (
     guardar_nota_vecino,
     borrar_nota,
     reportar_a_municipalidad,
+    compartir_ficha_con_inversionista,
+    armar_ficha,
+    PROPIEDADES,
     registro_aprobaciones,
     obtener_historial,
     extraer_texto,
@@ -86,6 +89,36 @@ def test_reporte_no_se_envia_sin_aprobacion_y_queda_registrado():
     assert "no se envió" in resultado
     assert registro_aprobaciones[-1]["herramienta"] == "reportar_a_municipalidad"
     assert registro_aprobaciones[-1]["aprobado"] is False
+
+
+def test_ficha_no_se_comparte_sin_aprobacion_y_queda_registrado():
+    resultado = compartir_ficha_con_inversionista.invoke(
+        {"direccion": "Almirante Barroso 256", "destinatario": "Fondo Ejemplo"}
+    )
+
+    assert "no se compartió" in resultado
+    assert registro_aprobaciones[-1]["herramienta"] == "compartir_ficha_con_inversionista"
+    assert registro_aprobaciones[-1]["aprobado"] is False
+
+
+def test_ficha_de_direccion_desconocida_no_pide_aprobacion():
+    cantidad_antes = len(registro_aprobaciones)
+    resultado = compartir_ficha_con_inversionista.invoke(
+        {"direccion": "Calle Inventada 999", "destinatario": "Fondo Ejemplo"}
+    )
+
+    assert "no se compartió nada" in resultado
+    assert len(registro_aprobaciones) == cantidad_antes
+
+
+def test_ficha_que_sale_de_la_comunidad_no_incluye_notas_de_vecinos():
+    guardar_nota_vecino.invoke({"direccion": "Almirante Barroso 256", "nota": "Parece que alguien duerme ahí."})
+
+    ficha = armar_ficha(PROPIEDADES["almirante barroso 256"])
+    borrar_nota("Almirante Barroso 256", 1)
+
+    assert "muy fuerte" in ficha
+    assert "duerme" not in ficha
 
 
 # ---------- Memoria ----------

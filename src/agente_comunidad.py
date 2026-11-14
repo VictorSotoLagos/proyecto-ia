@@ -31,6 +31,17 @@ PROPIEDADES = {
 }
 
 
+# Ficha con la evaluación de la fachada. Es lo único que sale de la comunidad (compartir_ficha_con_inversionista):
+# nunca lleva las notas de los vecinos, porque ahí pueden aparecer testimonios sobre quienes viven en la casa.
+# Lo limita el código, no el agente
+def armar_ficha(propiedad: dict) -> str:
+    senales = ", ".join(propiedad["senales"])
+    return (
+        f"{propiedad['direccion']} ({propiedad['barrio']}, {propiedad['pisos']} piso(s)). "
+        f"Señales: {senales}. Evidencia: {propiedad['evidencia']}. Fuente: {propiedad['fuente']}."
+    )
+
+
 #=== Herramientas de riesgo bajo: solo leen el registro ===
 @tool
 def consultar_propiedad(direccion: str) -> str:
@@ -41,12 +52,8 @@ def consultar_propiedad(direccion: str) -> str:
     """
     for clave, propiedad in PROPIEDADES.items():
         if clave in direccion.lower():
-            senales = ", ".join(propiedad["senales"])
-            texto = (
-                f"{propiedad['direccion']} ({propiedad['barrio']}, {propiedad['pisos']} piso(s)). "
-                f"Señales: {senales}. Evidencia: {propiedad['evidencia']}. Fuente: {propiedad['fuente']}."
-            )
-            # Si hay notas de vecinos, se agregan con su fecha
+            texto = armar_ficha(propiedad)
+            # Si hay notas de vecinos, se agregan con su fecha (solo dentro de la comunidad)
             notas = []
             for registro_nota in propiedad["notas"]:
                 notas.append(f"{registro_nota['fecha_hora'][:10]}: {registro_nota['nota']}")
@@ -209,7 +216,60 @@ def reportar_a_municipalidad(direccion: str, motivo: str) -> str:
     return f"Reporte enviado a la Municipalidad de Santiago (simulado) para {direccion}."
 
 
-herramientas = [consultar_propiedad, buscar_propiedades, guardar_nota_vecino, reportar_a_municipalidad]
+class ArgumentosFicha(BaseModel):
+    """Datos para compartir la ficha de una propiedad."""
+    direccion: str = Field(
+        description="Calle y número de la propiedad, por ejemplo 'Almirante Barroso 256'."
+    )
+    destinatario: str = Field(
+        description="Inversionista o tercero interesado que recibiría la ficha, tal como lo nombra el usuario."
+    )
+
+
+@tool(args_schema=ArgumentosFicha)
+def compartir_ficha_con_inversionista(direccion: str, destinatario: str) -> str:
+    """
+    Comparte con un inversionista o tercero interesado la ficha de evaluación de la fachada de una propiedad
+    (barrio, pisos, señales de abandono y evidencia), para que evalúe darle un nuevo uso. Usar solo cuando el
+    usuario pide explícitamente compartir o enviar la información de una propiedad a un inversionista. Acción
+    irreversible: una vez compartida, la información no se puede recuperar, por eso requiere aprobación humana
+    antes de ejecutarse. Nunca incluye las notas de los vecinos.
+    """
+    for clave, propiedad in PROPIEDADES.items():
+        if clave in direccion.lower():
+            ficha = armar_ficha(propiedad)
+            mensaje = (
+                f"[SUPERVISIÓN HUMANA REQUERIDA] El agente quiere compartir con {destinatario} esta ficha: "
+                f"{ficha} ¿Aprobar? (s/n): "
+            )
+
+            # Congela el proceso hasta que un coordinador de la comunidad dé el visto bueno
+            aprobado = esperar_aprobacion(mensaje, tiempo_limite_segundos=15)
+
+            # Se registra la decisión, se apruebe o no
+            registrar_aprobacion(
+                herramienta="compartir_ficha_con_inversionista",
+                argumentos={"direccion": direccion, "destinatario": destinatario},
+                aprobado=aprobado
+            )
+
+            if not aprobado:
+                return "La ficha no se compartió: no fue aprobada por un coordinador de la comunidad o se agotó el tiempo."
+
+            # Simulado: en el proyecto real, aquí se enviaría la ficha al destinatario
+            return f"Ficha compartida con {destinatario} (simulado): {ficha}"
+
+    # Si la propiedad no está registrada no hay nada que compartir, así que no se pide aprobación
+    return f"No hay una evaluación registrada para '{direccion}', así que no se compartió nada."
+
+
+herramientas = [
+    consultar_propiedad,
+    buscar_propiedades,
+    guardar_nota_vecino,
+    reportar_a_municipalidad,
+    compartir_ficha_con_inversionista,
+]
 
 
 #=== Memoria: un historial por cada vecino (session_id) ===
@@ -324,6 +384,9 @@ if __name__ == "__main__":
         # comunidad, aunque la memoria de la conversación sea de cada vecino
         ("vecino_3", "Anota en Almirante Barroso 256 que hoy vi la puerta tapiada con tablas nuevas."),
         ("vecino_5", "¿Hay notas de vecinos sobre Almirante Barroso 256?"),
+        # Riesgo alto: comparte la ficha con un tercero (nombre de prueba). La ficha no lleva la nota de vecino_3
+        ("vecino_6", "Comparte la ficha de Almirante Barroso 256 con el inversionista de prueba Fondo Ejemplo, "
+                     "que quiere restaurarla."),
         # Riesgo alto: pide aprobación en la consola (responde s o n antes de 15 segundos)
         ("vecino_1", "Quiero reportar a la Municipalidad la casa de Almirante Barroso 256, porque se le cayó el techo."),
     ]
