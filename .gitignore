@@ -20,3 +20,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Vector stores generados: se reconstruyen corriendo el script de indexación
+vectorstore/
+chroma_db/
+vectorstore_ejemplo/
