@@ -6,6 +6,9 @@ env/
 # Variables de entorno (secretos, nunca se sube)
 .env
 
+# Credenciales de la cuenta de servicio de Google Cloud (secreto, nunca se sube)
+credenciales.json
+
 # Cachés y compilados de Python
 __pycache__/
 *.py[cod]

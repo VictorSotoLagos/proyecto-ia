@@ -6,6 +6,7 @@ charset-normalizer==3.5.2
 chromadb==1.5.9
 colorama==0.4.6
 docstring_parser==0.18.0
+google-genai==3.3.0
 h11==0.16.0
 httpcore2==2.13.1
 httpx2==2.13.1
