@@ -1,0 +1,214 @@
+{
+  "modelo": "claude-opus-5-5",
+  "resumen": {
+    "respuestas": 20,
+    "fallas_de_formato": 0,
+    "no_exactas_antes_de_limpiar": 0,
+    "categorias_incorrectas": 0,
+    "tokens_entrada": 4050,
+    "tokens_salida": 149,
+    "costo_usd": 0.01918
+  },
+  "resultados": [
+    {
+      "mensaje": "Revisa la casa de Almirante Barroso 256, en Barrio Brasil.",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 204,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "hola, me puedes evaluar la fachada de maturana 520? queda en el barrio brasil",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 207,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "Necesito la ficha de la propiedad de Erasmo Escala 2140, en el barrio Concha y Toro.",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 215,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "Pasé por Romero 2045, en Concha y Toro. ¿Me ayudas a evaluar esa fachada?",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 216,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "¿En qué estado está la casa de Almirante Barroso 256?",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 198,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "Muéstrame propiedades de dos pisos en Barrio Brasil que tengan grafitis y vidrios rotos.",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 217,
+      "tokens_salida": 6
+    },
+    {
+      "mensaje": "¿Hay casas con el techo dañado y escombros en la entrada en Concha y Toro?",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 207,
+      "tokens_salida": 6
+    },
+    {
+      "mensaje": "necesito encontrar propiedades en concha y toro con la pintura descascarada",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 201,
+      "tokens_salida": 6
+    },
+    {
+      "mensaje": "Quiero ver casas de un piso con revoque caído.",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 194,
+      "tokens_salida": 6
+    },
+    {
+      "mensaje": "Busca propiedades con ventanas tapiadas, da lo mismo el barrio.",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 204,
+      "tokens_salida": 56
+    },
+    {
+      "mensaje": "¿Qué día pasa el camión de la basura por el Barrio Brasil?",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 202,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "Cuéntame la historia del Barrio Brasil.",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 194,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "¿Cuándo es la próxima reunión de vecinos en Concha y Toro?",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 204,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "¿Cómo me puedo sumar a la Comunidad Brasil Alameda?",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 204,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "¿Cuánto se demora la aplicación en evaluar una fachada?",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 200,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "Quiero que revises la fachada de Compañía 2150, en el Barrio Brasil.",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 206,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "¿Hay propiedades con grafitis y malezas en Concha y Toro?",
+      "esperada": "busqueda",
+      "respuesta_cruda": "busqueda",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 202,
+      "tokens_salida": 6
+    },
+    {
+      "mensaje": "¿A qué hora abre la feria del barrio?",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 192,
+      "tokens_salida": 4
+    },
+    {
+      "mensaje": "¿Puedes evaluar la fachada de Cueto 345?",
+      "esperada": "direccion",
+      "respuesta_cruda": "direccion",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 197,
+      "tokens_salida": 5
+    },
+    {
+      "mensaje": "Hola, buenas tardes.",
+      "esperada": "otro",
+      "respuesta_cruda": "otro",
+      "cumple_formato": true,
+      "palabra_exacta": true,
+      "correcta": true,
+      "tokens_entrada": 186,
+      "tokens_salida": 4
+    }
+  ]
+}
