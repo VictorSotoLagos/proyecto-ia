@@ -1,39 +1,38 @@
 # Decision de personalizacion
 
 ## 1. El problema
-La miniaplicación clasifica cada mensaje de un vecino como direccion, busqueda u otro para elegir su ruta, y la etiqueta tiene que llegar exacta: con tilde o con texto extra, el mensaje cae sin aviso en la ruta equivocada. Hoy la clasificación la hace Claude Opus 5.5 con un prompt, y en una muestra de 20 respuestas reales (docs/muestra_formato_clasificacion.json) 0 fallaron el formato y 0 tuvieron la categoría equivocada.
+Los vecinos van a buscar viviendas por señales de abandono (por ejemplo, "casas de un piso con ventanas tapiadas en Barrio Brasil"), y esas señales salen de evaluar fotos de Google Street View. El modelo no sabe qué casas del barrio ya están evaluadas, con qué señales ni qué anotaron los vecinos, porque ese inventario crece con cada foto evaluada; además, es una demo con presupuesto propio, y evaluar cada foto con Claude Opus 5.5 cuesta US$0,0149 (docs/decision-arquitectura.md).
 
 ## 2. Resultado del metodo de decision
-- RAG: 0 puntos
+- RAG: 5 puntos
+- PEFT: 1 puntos
 - Fine-tuning completo: 0 puntos
-- PEFT: 0 puntos
 
-**Empate entre: RAG, Fine-tuning completo, PEFT**
-
-Respuestas del método, con la evidencia de cada una (`src/decision.py`):
+Hay un ganador claro: RAG. Las respuestas del método y la evidencia de cada una están en `src/decision.py`:
 
 | Pregunta | Respuesta | Evidencia |
 |---|---|---|
-| `informacion_cambia_seguido` | False | Las 3 categorías y las 3 etiquetas de barrio están en `src/prompts/banco.py` desde el 22-10-2026, y el enrutador usa las mismas desde el 04-11-2026: 0 cambios desde entonces. |
-| `problema_de_formato_o_tono` | False | En una muestra de 20 respuestas reales del clasificador del enrutador (`src/muestra_formato.py`, 22-11-2026), 0 fallaron el formato. El umbral es 3 de 20. |
-| `dataset_grande_y_de_calidad` | False | Hay 15 ejemplos etiquetados (`src/dataset_tuning.py`), y el umbral es 200. |
-| `presupuesto_limitado_o_iterar_rapido` | False | El presupuesto alcanza para más de 2 entrenamientos: cada uno costó cerca de US$0,01 y tardó 27 minutos (`docs/registro_tuning.md`). No se necesita ver el efecto en menos de un día. |
-| `necesita_multiples_variantes` | False | Hay un solo clasificador para los 2 barrios y las 3 categorías. |
+| `informacion_cambia_seguido` | True | Los datos de propiedades que consulta el agente (`src/agente_comunidad.py`) cambiaron en 3 commits en noviembre de 2026 (12, 13 y 14). El inventario crece con cada foto evaluada y con cada nota de un vecino. |
+| `problema_de_formato_o_tono` | False | En una muestra de 20 evaluaciones de la foto de Almirante Barroso 256 con `gemini-3.5-flash-lite` sin ajuste (`src/muestra_evaluacion_fachada.py`), 0 fallaron los 4 criterios fijos: JSON con las 5 claves, solo señales permitidas, nivel de evidencia permitido y ver el techo dañado, la señal más grave. Las 20 calificaron la evidencia como "muy fuerte", igual que Opus en el Gate 1. El umbral es 3 de 20. |
+| `dataset_grande_y_de_calidad` | False | Hay 1 evaluación de fachada etiquetada, la de Almirante Barroso 256. El umbral es 200. |
+| `presupuesto_limitado_o_iterar_rapido` | True | Es una demo con presupuesto propio: alcanza para muestras y para entrenamientos de PEFT de centavos (cerca de US$0,01 cada uno, `docs/registro_tuning.md`), pero no para un fine-tuning completo. Uso este criterio en vez del umbral de 2 intentos, porque el límite real de la demo es el costo de cada técnica. |
+| `necesita_multiples_variantes` | False | Hay un solo evaluador de fachadas para los 2 barrios. |
 
 ## 3. Tecnica elegida y por que
-El método terminó en un empate triple en 0 puntos: ninguna de las cinco preguntas dio una señal a favor de personalizar, así que el puntaje no decide por mí.
+**Elijo RAG.** Lo que le falta al modelo es información que cambia: qué casas están evaluadas, con qué señales y qué anotaron los vecinos. Sin ese inventario, el modelo responde de memoria y se equivoca; en el Bloque 29, por ejemplo, ubicó Concha y Toro en Puente Alto (`docs/registro_tuning.md`).
 
-**Decisión: no personalizo el modelo por ahora y mantengo el prompt actual.** Hoy el problema no aparece (0 de 20 respuestas fallaron el formato), así que pagar el costo en datos, cómputo y tiempo de cualquiera de las tres técnicas no corregiría nada. Clasificar tampoco es caro: las 20 respuestas de la muestra costaron US$0,019, cerca de US$0,001 cada una.
-
-- **Descarto RAG**, porque al clasificador no le falta información: las categorías son fijas y el barrio sale del propio mensaje, no de un documento que cambie.
-- **Descarto el fine-tuning completo**, porque necesita todavía más ejemplos y cómputo que PEFT, y la salida es una sola palabra.
-- **PEFT queda como técnica de reserva**, para el día en que la clasificación pase a un modelo más barato que no cumpla el formato. Corrí el método otra vez cambiando solo la respuesta más dudosa: si `problema_de_formato_o_tono` fuera True, PEFT ganaría con 2 puntos, contra 1 del fine-tuning completo y 0 de RAG. Ese caso ya se vio en el Bloque 29: `gemini-3.5-flash-lite`, ajustado con 15 ejemplos, no devolvió el formato en ninguno de 3 mensajes nuevos (`docs/registro_tuning.md`).
+- **PEFT no hace falta todavía.** El modelo barato ya aplica el criterio de la comunidad sin ajuste, en 20 de 20 respuestas. Por eso, con el presupuesto de una demo, la evaluación de las fotos puede pasar de Opus a `gemini-3.5-flash-lite` usando solo el prompt.
+- **Revisé la respuesta más dudosa**, la del formato. La muestra usó una sola foto, de una casa en ruina evidente. Si con fotos de casas en estados intermedios fallaran 3 o más de 20, `problema_de_formato_o_tono` pasaría a True. Con eso, el método daría RAG 5, PEFT 3 y fine-tuning completo 1: RAG seguiría ganando y PEFT entraría como complemento. RAG serviría para saber qué casas hay, y PEFT para que el modelo barato aplique el criterio igual en cada foto.
+- **Descarto el fine-tuning completo**, porque no hay presupuesto para reentrenar el modelo entero ni 200 ejemplos para hacerlo.
+- **El clasificador de mensajes no necesita personalización.** Con el prompt actual acertó el formato y la categoría en 20 de 20 respuestas (`docs/muestra_formato_clasificacion.json`).
 
 ## 4. Que necesitarias para ejecutarla
-Hoy no hay nada que ejecutar. Para usar PEFT, la técnica de reserva, haría falta lo siguiente:
+**Para RAG**, que es la técnica elegida:
+- **Corpus:** hoy hay 1 ficha indexable, la de Almirante Barroso 256. Para la demo propongo cubrir las 64 fachadas del Barrio Concha y Toro, la cifra del programa de recuperación de fachadas del Gobierno de Santiago (julio de 2026), más Almirante Barroso 256. Faltan 64 fichas de 65.
+- **Fotos y evaluación:** cada ficha necesita su foto de Street View evaluada. Con Opus, las 64 evaluaciones costarían unos US$0,95 (64 × US$0,0149) y tardarían unos 9 minutos (8,6 segundos cada una). Con `gemini-3.5-flash-lite`, cada evaluación usó 1.371 tokens de entrada y 159 de salida.
+- **Notas de los vecinos:** van como documentos adicionales del corpus, cada una con su fecha.
+- **Indexación:** se reutiliza lo de la Unidad 2.5 (`src/indexar_corpus.py`: Chroma con embeddings de Gemini). Cada ficha cabe en un chunk, y su barrio, pisos y nivel de evidencia van como metadatos.
 
-- **Ejemplos:** tengo 15 ejemplos etiquetados, 5 por categoría. El método pide al menos 200, así que con unos 67 por categoría (201 en total) me faltan 62 de cada una, 186 en total. A 5 minutos por ejemplo, la tasa de la lección, son unas 15,5 horas de etiquetado.
-- **Calidad:** antes de entrenar, revisaría 20 ejemplos al azar para confirmar que ninguno tiene etiquetas contradictorias.
-- **Cómputo y tiempo:** cada intento de entrenamiento tardó 27 minutos. Los 15 ejemplos actuales suman 474 tokens, unos 32 por ejemplo, así que 201 ejemplos serían unos 6.400 tokens por época. Con 5 épocas son unos 32.000 tokens, cerca de US$0,16 a la tarifa que Google publica para el tuning de Gemini 2.5 (US$5 por millón).
-- **Corpus:** no necesito un corpus para indexar, porque no uso RAG.
-- **Condición para empezar:** que una muestra de 20 respuestas del modelo que se quiera usar tenga 3 o más fallas de formato, el umbral del método.
+**Para PEFT, solo si se cumple la condición de la sección 3:**
+- **Ejemplos:** hay 1 evaluación etiquetada. Faltan 199 para llegar a 200, unas 16,6 horas a 5 minutos por ejemplo, la tasa de la lección. Cada ejemplo necesita además su foto en el bucket de Google Cloud.
+- **Primer paso:** antes de etiquetar, tomar una muestra de 20 fotos variadas para saber si hace falta.

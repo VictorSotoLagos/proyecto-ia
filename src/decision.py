@@ -4,13 +4,13 @@ import os
 # El documento se guarda en docs/, como el resto de la evidencia del proyecto, y después se completa a mano
 ARCHIVO_DECISION = "docs/decision_personalizacion.md"
 
-# El caso candidato del Bloque 29, descrito sin nombrar ninguna técnica
+# El caso principal de la app, descrito sin nombrar ninguna técnica
 PROBLEMA = (
-    "La miniaplicación clasifica cada mensaje de un vecino como direccion, busqueda u otro para elegir su "
-    "ruta, y la etiqueta tiene que llegar exacta: con tilde o con texto extra, el mensaje cae sin aviso en "
-    "la ruta equivocada. Hoy la clasificación la hace Claude Opus 5.5 con un prompt, y en una muestra de "
-    "20 respuestas reales (docs/muestra_formato_clasificacion.json) 0 fallaron el formato y 0 tuvieron la "
-    "categoría equivocada."
+    "Los vecinos van a buscar viviendas por señales de abandono (por ejemplo, \"casas de un piso con "
+    "ventanas tapiadas en Barrio Brasil\"), y esas señales salen de evaluar fotos de Google Street View. "
+    "El modelo no sabe qué casas del barrio ya están evaluadas, con qué señales ni qué anotaron los vecinos, "
+    "porque ese inventario crece con cada foto evaluada; además, es una demo con presupuesto propio, y "
+    "evaluar cada foto con Claude Opus 5.5 cuesta US$0,0149 (docs/decision-arquitectura.md)."
 )
 
 
@@ -39,18 +39,20 @@ def recomendar_estrategia(respuestas):
 
 # Las respuestas de este proyecto, cada una con la evidencia que la sustenta
 respuestas_mi_caso = {
-    # Las 3 categorías y las 3 etiquetas de barrio están en src/prompts/banco.py desde el 22-10-2026, y el
-    # enrutador usa las mismas desde el 04-11-2026: 0 cambios desde entonces (umbral: 1 cambio al mes)
-    "informacion_cambia_seguido": False,
-    # Muestra de 20 respuestas reales del clasificador del enrutador (src/muestra_formato.py):
-    # 0 de 20 fallaron el formato (umbral: 3 de 20, el 15 %)
+    # Los datos de propiedades que consulta el agente (src/agente_comunidad.py) cambiaron en 3 commits en
+    # noviembre de 2026 (12, 13 y 14), y el inventario crece con cada foto evaluada y con cada nota de un
+    # vecino (umbral: 1 cambio al mes)
+    "informacion_cambia_seguido": True,
+    # Muestra de 20 evaluaciones de la foto de Almirante Barroso 256 con gemini-3.5-flash-lite sin ajuste
+    # (src/muestra_evaluacion_fachada.py): 0 de 20 fallaron los 4 criterios fijos (umbral: 3 de 20, el 15 %)
     "problema_de_formato_o_tono": False,
-    # Hay 15 ejemplos etiquetados en src/dataset_tuning.py (umbral: 200)
+    # Hay 1 evaluación de fachada etiquetada, la de Almirante Barroso 256 (umbral: 200)
     "dataset_grande_y_de_calidad": False,
-    # El presupuesto alcanza para más de 2 entrenamientos (cada uno costó cerca de US$0,01 y tardó 27 minutos)
-    # y no se necesita ver el efecto de un cambio en menos de un día
-    "presupuesto_limitado_o_iterar_rapido": False,
-    # Un solo clasificador para los 2 barrios y las 3 categorías
+    # Es una demo con presupuesto propio: alcanza para muestras y para entrenamientos de PEFT de centavos
+    # (US$0,01 cada uno), pero no para un fine-tuning completo. Se usa este criterio en vez del umbral de
+    # "2 intentos", porque el límite real de la demo es el costo de cada técnica
+    "presupuesto_limitado_o_iterar_rapido": True,
+    # Un solo evaluador de fachadas para los 2 barrios
     "necesita_multiples_variantes": False,
 }
 
@@ -95,8 +97,8 @@ if __name__ == "__main__":
     print(puntos)
     print("candidatas:", ganadoras)
 
-    # "Cómo se prueba": se corre el método otra vez cambiando solo la respuesta más dudosa. Con Claude no hay
-    # fallas de formato, pero un modelo más barato sí las tuvo (el Gemini ajustado del Bloque 29: 3 de 3)
+    # "Cómo se prueba": se corre el método otra vez cambiando solo la respuesta más dudosa. La muestra usó una
+    # sola foto, de una casa en ruina evidente: con fotos de casas en estados intermedios podría haber fallas
     respuestas_variante = dict(respuestas_mi_caso)
     respuestas_variante["problema_de_formato_o_tono"] = True
     puntos_variante, ganadoras_variante = recomendar_estrategia(respuestas_variante)

@@ -1,0 +1,239 @@
+{
+  "modelo": "gemini-3.5-flash-lite",
+  "foto": "docs/fachada-almirante-barroso-256.png",
+  "resumen": {
+    "respuestas": 20,
+    "fallas": 0,
+    "sin_json_con_claves": 0,
+    "con_senales_no_permitidas": 0,
+    "con_nivel_no_permitido": 0,
+    "sin_techo_danado": 0,
+    "niveles_de_evidencia": {
+      "muy fuerte": 20
+    },
+    "tokens_entrada_por_respuesta": 1371,
+    "tokens_salida_por_respuesta": 159
+  },
+  "resultados": [
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"vanos abiertos o vidrios rotos\",\n    \"techo dañado\",\n    \"malezas\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta grafitis extensos, pérdida severa de revoque y pintura, además de vanos abiertos y techo colapsado con maleza en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 136
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial del techo, muros sin revoque y vanos abiertos con escombros. Además, exhibe abundante vegetación en la parte superior y pintadas extensas de grafitis en toda su superficie.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 162
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con pérdida parcial del techo, muros con grafitis extensos, revoque caído y grandes aberturas sin vidrios. Se observa acumulación de maleza en la parte superior y escombros en los vanos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 161
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con graves daños estructurales, techo colapsado, acumulación de escombros y abundante vegetación en la parte superior. Además, muestra una gran cantidad de grafitis, muros con revoque caído y vanos completamente abiertos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 163
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"grafitis\",\n    \"vanos abiertos o vidrios rotos\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"malezas\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta múltiples grafitis, revoque caído, pintura descascarada y vanos abiertos con vidrios rotos. Además, muestra daños severos en el techo, presencia de malezas en la parte superior y acumulación de escombros en los accesos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 164
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial del techo, muros sin revoque y acumulación de escombros. Se observan numerosos grafitis, vanos abiertos con vidrios rotos y vegetación creciendo en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 161
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"vanos abiertos o vidrios rotos\",\n    \"techo dañado\",\n    \"malezas\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta grafitis extensos, pérdida severa de revoque, pintura descascarada y vanos abiertos con escombros. Además, se observa daño estructural importante en el techo y presencia de maleza en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 157
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial de la techumbre, muros con abundante grafiti, revoque caído y grandes vanos abiertos. Se observa vegetación creciendo en la parte superior y acumulación de escombros en los accesos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 162
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con colapso parcial de la estructura, techo destruido, grandes acumulaciones de escombros y maleza. Además, muestra grafitis extensos, pérdida severa de revoque y vanos abiertos sin protección.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 161
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial del techo, muros sin revoque y cubiertos de grafitis. Se aprecian vanos abiertos, escombros acumulados y vegetación creciendo en la estructura superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 158
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial del techo, muros sin revoque y abundantes grafitis. Se aprecian vanos abiertos, escombros acumulados y vegetación creciendo en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 157
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta grafitis extensos, pérdida severa de revoque, pintura descascarada y vanos abiertos con daños estructurales. Además, se observa daño importante en el techo, presencia de maleza en la parte superior y acumulación de escombros.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 163
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"vanos abiertos o vidrios rotos\",\n    \"techo dañado\",\n    \"malezas\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado de abandono crítico con colapso parcial del techo, muros sin revoque y gran cantidad de grafitis. Se aprecian vanos abiertos, acumulación de escombros y maleza en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 158
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial de la estructura superior, muros con grafitis extensos, pérdida masiva de revoque y vanos abiertos. Además, se observa vegetación creciendo en la parte superior y acumulación de escombros.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 165
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con pérdida parcial del techo, muros con grafitis, revoque caído y aberturas sin vidrios. Se observa vegetación en la parte superior y acumulación de escombros en los vanos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 158
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con colapso parcial del techo, muros con grafitis, revoque caído y grandes aberturas sin vidrios. Además, se aprecian acumulación de escombros y maleza en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 161
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso con pérdida parcial del techo, muros con grafitis extensos, revoque caído y grandes aberturas sin vidrios. Se observa acumulación de escombros y crecimiento de maleza en la parte superior.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 159
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con techumbre destruida, muros con desprendimientos severos y acumulación de escombros. Además, muestra una gran cantidad de grafitis y vanos abiertos sin cierres seguros.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 155
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\",\n    \"escombros\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta un estado ruinoso avanzado con colapso parcial de la estructura superior, techumbre dañada y acumulación de escombros. Se observan muros con pérdida masiva de revoque, presencia de vegetación, numerosos grafitis y vanos abiertos.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 164
+    },
+    {
+      "json_con_claves": true,
+      "senales_permitidas": true,
+      "nivel_permitido": true,
+      "ve_techo_danado": true,
+      "cumple": true,
+      "evidencia": "muy fuerte",
+      "respuesta": "{\n  \"fachada_visible\": true,\n  \"senales\": [\n    \"vanos abiertos o vidrios rotos\",\n    \"malezas\",\n    \"grafitis\",\n    \"pintura descascarada\",\n    \"revoque caído\",\n    \"techo dañado\"\n  ],\n  \"pisos\": 1,\n  \"evidencia\": \"muy fuerte\",\n  \"descripcion\": \"La fachada presenta grafitis extensos, pérdida masiva de revoque y vanos abiertos con daños estructurales severos. Además, se observa vegetación descontrolada en la parte superior y daños críticos en el techo.\"\n}",
+      "tokens_entrada": 1371,
+      "tokens_salida": 146
+    }
+  ]
+}
